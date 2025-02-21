@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
                 'name' => $product['product_name'],
                 'price' => $product['price'],
                 'quantity' => $quantity,
-                'size' => $size
+                'size' => $size,
+                'image_url' => $product['image_url'] // Store the image URL
             ];
 
             if (!isset($_SESSION['cart'])) {
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_item'])) {
 <body class="bg-gray-100 font-sans">
     <nav class="bg-white shadow-sm p-4">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="shoes1.php" class="text-xl font-bold">ShoeVibes</a>
+            <a href="../index.php" class="text-xl font-bold"><img src="../image/logo4.png" class="h-16" alt=""></a>
             <span class="bg-blue-500 text-white px-4 py-2 rounded">
                 Cart (<?php echo isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0; ?>)
             </span>
@@ -93,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_item'])) {
                 <?php foreach ($_SESSION['cart'] as $index => $item): ?>
                     <div class="mb-4 pb-4 border-b flex justify-between items-center">
                         <div>
+                        <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="Product Image" class="h-16 w-16 object-cover mr-4">
                             <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($item['product_name']); ?></h2>
                             <p>Size: <?php echo htmlspecialchars($item['size']); ?></p>
                             <p>Quantity: <?php echo htmlspecialchars($item['quantity']); ?></p>
