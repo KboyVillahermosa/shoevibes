@@ -1,9 +1,60 @@
 <?php
-include '../database.php'; // Database connection
+session_start(); // Start the session at the very top
+
+include '../database.php'; // Database connection (adjust path if needed)
 
 // Initialize messages
 $order_message = "";
 $thank_you_message = "";
+$customization_error = "";
+$customization_success = "";
+
+// ** NEW: Handle Image and Customization Data from POST **
+if(isset($_POST['imageData']) && isset($_POST['customizationData'])) {
+    $imageData = $_POST['imageData'];
+    $customizationData = $_POST['customizationData'];
+
+    $imageData = str_replace('data:image/png;base64,', '', $imageData);
+    $imageData = str_replace(' ', '+', $imageData);
+    $decodedImage = base64_decode($imageData);
+
+    $folderPath = "customizations/";
+    if (!is_dir($folderPath)) {
+        mkdir($folderPath, 0777, true);
+    }
+
+    $timestamp = time();
+    $imageFileName = $folderPath . "custom_shoe_" . $timestamp . ".png";
+    $jsonFileName  = $folderPath . "custom_shoe_" . $timestamp . ".json";
+
+    $imageSaved = file_put_contents($imageFileName, $decodedImage);
+    $jsonSaved = file_put_contents($jsonFileName, $customizationData);
+
+    if($imageSaved && $jsonSaved) {
+        $customization_success = "Customization saved successfully!<br>";
+        $customization_success .= "<img src='$imageFileName' alt='Customized Shoe' style='max-width:300px;'/><br>";
+         // Construct the correct relative path to the JSON file
+         $jsonPath = 'shoes-preview/' . $folderPath . basename($jsonFileName);
+         $customization_success .= "<a href='../view_customization.php?json=" . urlencode($jsonPath) . "' target='_blank'>View 3D Customization</a>";
+
+          // Store data in session:
+          $_SESSION['customized_image'] = $imageFileName; // image path
+          $_SESSION['customized_json'] = $jsonPath; // json path
+          $_SESSION['customization_success'] = $customization_success; // all messages
+
+    } else {
+        $customization_error = "Error saving the customization.";
+    }
+}
+
+// Retrieve data from session (if available)
+if (isset($_SESSION['customization_success'])) {
+    $customization_success = $_SESSION['customization_success'];
+
+}
+else {
+    $customization_success ="";
+}
 
 // Get product ID from URL, default to 1
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 1; //Sanitize input, ensure integer
@@ -12,7 +63,7 @@ $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 1; //Sa
 $sql = "SELECT * FROM products WHERE product_id = ?";
 $stmt = $conn->prepare($sql);
 
-if ($stmt) { // Check if prepare was successful
+if ($stmt) {
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -21,23 +72,42 @@ if ($stmt) { // Check if prepare was successful
         $productDetails = $result->fetch_assoc();
     } else {
         $productDetails = null;
-        $order_message = "Product not found."; // set error message
+        $order_message = "Product not found.";
     }
-
-    $stmt->close(); // Close statement
+    $stmt->close();
 } else {
     $order_message = "Database error: " . $conn->error;
     $productDetails = null;
 }
 
+// Check if customization data exists in localStorage
+$customization_data_json = ""; // Initialize the variable
+if (isset($_GET['customized']) && $_GET['customized'] == 'true') {
+    // Retrieve the customization data from localStorage using JavaScript and store it in a PHP variable
+    echo '<script>
+            window.onload = function() {
+                var customizationData = localStorage.getItem("shoeCustomization");
+                if (customizationData) {
+                    // Store the customization data in a hidden input field
+                    document.getElementById("customizationData").value = customizationData;
+                    // Display customization data for testing
+                    document.getElementById("customizationDisplay").innerHTML = "<p><b>Customization Data (JSON):</b></p><pre>" + customizationData + "</pre>";
+                } else {
+                    console.log("No customization data found in localStorage.");
+                    document.getElementById("customizationDisplay").innerHTML = "<p>No customization data available.</p>";
+                }
+            };
+          </script>';
+}
+
 // Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['imageData']) && !isset($_POST['customizationData'])) {
     // Sanitize and validate input
-    $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;  // Default to 1, ensure integer
+    $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
     $size = isset($_POST['size']) ? filter_var($_POST['size'], FILTER_SANITIZE_STRING) : '';
     $firstName = isset($_POST['firstName']) ? filter_var($_POST['firstName'], FILTER_SANITIZE_STRING) : '';
     $lastName = isset($_POST['lastName']) ? filter_var($_POST['lastName'], FILTER_SANITIZE_STRING) : '';
-    $phone = isset($_POST['phone']) ? filter_var($_POST['phone'], FILTER_SANITIZE_STRING) : ''; //Consider using a REGEX for validation.
+    $phone = isset($_POST['phone']) ? filter_var($_POST['phone'], FILTER_SANITIZE_STRING) : '';
     $email = isset($_POST['email']) ? filter_var($_POST['email'], FILTER_SANITIZE_EMAIL) : '';
     $street = isset($_POST['street']) ? filter_var($_POST['street'], FILTER_SANITIZE_STRING) : '';
     $barangay = isset($_POST['barangay']) ? filter_var($_POST['barangay'], FILTER_SANITIZE_STRING) : '';
@@ -45,7 +115,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $province = isset($_POST['province']) ? filter_var($_POST['province'], FILTER_SANITIZE_STRING) : '';
     $postalCode = isset($_POST['postalCode']) ? filter_var($_POST['postalCode'], FILTER_SANITIZE_STRING) : '';
 
-    // Validate required fields (example)
+    // NEW: Get customization data from the form (It's populated by JS)
+    $customization_data = isset($_POST['customization_data']) ? $_POST['customization_data'] : '';
+
+    // Validate required fields
     if (empty($firstName) || empty($lastName) || empty($phone) || empty($email) || empty($street) || empty($barangay) || empty($city) || empty($province) || empty($postalCode)) {
         $order_message = "Error: Please fill in all required fields.";
     } elseif (empty($size)) {
@@ -66,36 +139,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $total_price = $quantity * $price;
 
                 // Insert order into the database
-                $sql_insert = "INSERT INTO orders (product_id, quantity, size, total_price, first_name, last_name, phone, email, street, barangay, city, province, postal_code)
-                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $sql_insert = "INSERT INTO orders (product_id, quantity, size, total_price, first_name, last_name, phone, email, street, barangay, city, province, postal_code, customization_data)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt_insert = $conn->prepare($sql_insert);
 
                 if ($stmt_insert) {
-                    $stmt_insert->bind_param("iisdsssssssss", $product_id, $quantity, $size, $total_price, $firstName, $lastName, $phone, $email, $street, $barangay, $city, $province, $postalCode);
-
-                    if ($stmt_insert->execute()) {
+                    $stmt_insert->bind_param("iisdssssssssss", $product_id, $quantity, $size, $total_price, $firstName, $lastName, $phone, $email, $street, $barangay, $city, $province, $postalCode, $customization_data);
+                     if ($stmt_insert->execute()) {
                         $order_message = "Order submitted successfully!";
                         $thank_you_message = "Thank you for choosing ShoeVibes!";
                         echo '<script>setTimeout(function(){ document.getElementById("thankYouModal").classList.remove("hidden"); }, 500);</script>';
-
                     } else {
                         $order_message = "Error submitting order: " . $stmt_insert->error;
                     }
-                    $stmt_insert->close(); //close insert statement
+                    $stmt_insert->close();
                 } else {
                     $order_message = "Database error: " . $conn->error;
                 }
             } else {
                 $order_message = "Error: Product price not found!";
             }
-            $stmt_price->close(); //close price statement
-
+            $stmt_price->close();
         } else {
             $order_message = "Database error: " . $conn->error;
         }
     }
 }
+
+if(isset($_POST['saveCustomization'])) {
+    $customization_data = $_POST['customization_data'];
+    $user_id = $_SESSION['user_id'];
+
+    $stmt = $conn->prepare("UPDATE users SET customization_data = ? WHERE id = ?");
+    $stmt->bind_param("si", $customization_data, $user_id);
+    
+    if($stmt->execute()) {
+        $_SESSION['customization_data'] = $customization_data;
+        echo json_encode(['status' => 'success', 'message' => 'Customization saved successfully']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Failed to save customization']);
+    }
+    exit;
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -104,11 +191,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="./ccs/shoes.css"> <!-- Consider moving inline styles to this file -->
+    <link rel="stylesheet" href="./ccs/shoes.css">
     <title>Product Page</title>
 
     <style>
-        /* Moved inline styles here, consider moving to shoes.css for better organization */
         .size-button {
             background-color: white;
             color: black;
@@ -126,7 +212,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-color: black;
         }
 
-        .size-button.selected {  /* Style for selected size */
+        .size-button.selected {
             background-color: black;
             color: white;
         }
@@ -168,11 +254,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .thumbnail-container {
             display: flex;
-            /* Enable flex container */
             flex-wrap: wrap;
-            /* Allow wrapping to next row */
             justify-content: center;
-            /* Center items horizontally */
         }
 
         .shoes1 {
@@ -198,25 +281,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 0.25rem;
         }
 
-                /* Sidebar Styles */
         #orderSidebar {
             position: fixed;
             top: 0;
             left: 0;
             height: 100%;
-            width: 550px; /* Adjust width as needed */
+            width: 550px;
             background: white;
             color: black;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            transform: translateX(-100%); /* Initially hidden */
+            transform: translateX(-100%);
             transition: transform 0.3s ease-in-out;
             z-index: 50;
-            overflow-y: auto; /* Enable scrolling */
+            overflow-y: auto;
         }
 
         #orderSidebar.active {
-            transform: translateX(0); /* Slide in when active */
+            transform: translateX(0);
         }
 
         #sidebarOverlay {
@@ -233,12 +315,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         #sidebarOverlay.active {
             display: block;
         }
-        .order{
+
+        .order {
             background: black;
             color: white;
             padding: 10px;
             border-radius: 10px;
+        }
 
+        /* Style for displaying the customization data */
+        #customizationDisplay {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
     </style>
 </head>
@@ -247,7 +338,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <section>
         <nav class="bg-white border-gray-200 shadow-sm">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <a href="../index.php" class="flex items-center space-x-3 rtl:space-x-reverse">
                     <img src="../image/logo4.png" class="h-16" alt="ShoeVibes Logo" />
                 </a>
                 <button data-collapse-toggle="navbar-default" type="button"
@@ -300,18 +391,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <img src="../image/s3.png" alt="Shoe 3"
                     class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                     onclick="changeImage(this)">
-                <img src="../image/s4.png" alt="Shoe 4"
-                    class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
-                    onclick="changeImage(this)">
-                <img src="../image/s5.png" alt="Shoe 5"
-                    class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
-                    onclick="changeImage(this)">
-                <img src="../image/s6.png" alt="Shoe 6"
-                    class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
-                    onclick="changeImage(this)">
-                <img src="../image/s7.png" alt="Shoe 7"
-                    class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
-                    onclick="changeImage(this)">
             </div>
 
             <!-- Main product image -->
@@ -323,6 +402,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php else: ?>
                     <p class="text-red-500">Product not found.</p>
                 <?php endif; ?>
+
+                <?php
+                if (!empty($customization_success)) {
+                    echo $customization_success;
+                }
+                if (!empty($customization_error)) {
+                    echo "<p class='text-red-500'>" . htmlspecialchars($customization_error) . "</p>";
+                }
+                ?>
             </div>
 
             <!-- Product details -->
@@ -330,6 +418,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="product-header-content">
                     <div class="flex-1 bg-white p-6 rounded-lg shadow-lg">
                         <?php if ($productDetails): ?>
+                            <a href="../boss.php">
+                                <h2 class="text-xl font-semibold text-gray-800 mb-2 underline cursor-pointer">Customize
+                                    shoes</h2>
+                            </a>
                             <h2 class="text-xl font-semibold text-gray-800 mb-2">
                                 <?php echo htmlspecialchars($productDetails['product_name']); ?>
                             </h2>
@@ -372,7 +464,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="flex flex-col gap-4">
                                 <button class="add-to-cart-button"
                                     onclick="addToCart(<?php echo $product_id; ?>)">Add to Cart</button>
-                                <button onclick="openSidebar()" class="order-now-button">Order Now - Cash on Delivery</button>
+                                <button onclick="openSidebar()" class="order-now-button">Order Now - Cash on
+                                    Delivery</button>
                             </div>
                         <?php else: ?>
                             <p class="text-red-500">Product details not found.</p>
@@ -381,6 +474,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
         </div>
+
+       
+        
     </section>
 
     <!-- Sidebar -->
@@ -388,19 +484,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h3 class="text-2xl font-semibold mb-4">Your Order</h3>
         <button onclick="closeSidebar()" class="absolute top-2 right-2 text-black hover:text-gray-300">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
         <?php if ($productDetails): ?>
-            <p>Product: <span><?php echo htmlspecialchars($productDetails['product_name']); ?></span></p>
-            <p>Price: ₱<span id="modalPrice"><?php echo number_format($productDetails['price'], 2); ?></span></p>
+            <p>Product: <span>
+                    <?php echo htmlspecialchars($productDetails['product_name']); ?>
+                </span></p>
+            <p>Price: ₱<span id="modalPrice">
+                    <?php echo number_format($productDetails['price'], 2); ?>
+                </span></p>
             <input type="hidden" name="quantity" id="modal_quantity" value="1">
             <input type="hidden" name="size" id="modal_size" value="">
             <p>Quantity: <span id="modalQuantity">1</span></p>
-            <p>Size: <span id="modalSize">Not selected</span></p>
+            <p>Size: <span>Not selected</span></p>
             <p>Total: ₱<span id="modalTotal">0.00</span></p>
             <?php if (!empty($order_message)): ?>
-                <div class="mb-4 text-sm <?php echo strpos($order_message, 'Error') !== false ? 'text-red-500' : 'text-green-500'; ?>">
+                <div
+                    class="mb-4 text-sm <?php echo strpos($order_message, 'Error') !== false ? 'text-red-500' : 'text-green-500'; ?>">
                     <?php echo $order_message; ?>
                 </div>
             <?php endif; ?>
@@ -412,6 +514,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form id="orderForm" method="post" action="?product_id=<?php echo $product_id; ?>">
             <input type="hidden" name="quantity" id="quantity" value="1">
             <input type="hidden" name="size" id="size" value="">
+            <!-- Hidden input for customization data -->
+            <input type="hidden" name="customization_data" id="customizationData" value="">
             <div class="mb-4">
                 <label class="modal-label">First Name</label>
                 <input type="text" placeholder="First Name" name="firstName" class="modal-input" required>
@@ -448,7 +552,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label class="modal-label">Postal Code</label>
                 <input type="text" placeholder="Postal Code" name="postalCode" class="modal-input" required>
             </div>
-            <button type="submit" class="order w-full bg-blue-500 text-white py-2 rounded-lg mb-4 hover:bg-blue-600 transition-colors duration-200">
+            <button type="submit"
+                class="order w-full bg-blue-500 text-white py-2 rounded-lg mb-4 hover:bg-blue-600 transition-colors duration-200">
                 Submit Order
             </button>
         </form>
@@ -461,8 +566,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden" id="thankYouModal">
         <div class="modal-content bg-white p-8 rounded-lg w-96">
             <h3 class="text-2xl font-semibold mb-4">Thank You!</h3>
-            <p class="text-gray-700"><?php echo htmlspecialchars($thank_you_message); ?></p>
-            <button onclick="closeThankYouModal()" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors duration-200 mt-4">
+            <p class="text-gray-700">
+                <?php echo htmlspecialchars($thank_you_message); ?>
+            </p>
+            <button onclick="closeThankYouModal()"
+                class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors duration-200 mt-4">
                 Close
             </button>
         </div>
@@ -526,7 +634,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.getElementById('orderModal').classList.add('hidden');
         }
 
-
         function closeThankYouModal() {
             document.getElementById('thankYouModal').classList.add('hidden');
             // Optionally, redirect to the home page or clear the form
@@ -545,7 +652,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         function updateModal() {
             let quantity = parseInt(document.getElementById('quantity').value);
-            let price = parseFloat(document.getElementById('productPrice').innerText.replace(/,/g, '')); // Get price from product details
+            let price = parseFloat(document.getElementById('productPrice').innerText.replace(/,/g, ''));
 
             let total = quantity * price;
 
@@ -578,19 +685,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 },
                 body: `product_id=${productId}&quantity=${quantity}&size=${size}`
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert(data.message); // Show success message
-                        updateCartCount(data.cart_count); // Update the cart count in the navbar
-                    } else {
-                        alert(data.message); // Show error message
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while adding to cart.');
-                });
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message); // Show success message
+                    updateCartCount(data.cart_count); // Update the cart count in the navbar
+                } else {
+                    alert(data.message); // Show error message
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding to cart.');
+            });
         }
 
         function updateCartCount(count) {
@@ -599,26 +706,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             cartCountSpan.classList.remove('hidden'); // Make the cart count visible
         }
 
-        function addToCart(productId) {
-            const quantity = document.getElementById('quantity').value;
-            const size = document.getElementById('size').value;
+         // Retrieve customization data from localStorage on page load
+        window.onload = function() {
+            var customizationData = localStorage.getItem("shoeCustomization");
+            if (customizationData) {
+                document.getElementById("customizationData").value = customizationData;
+                // Display for testing
+                document.getElementById("customizationDisplay").innerHTML = "<p><b>Customization Data:</b></p><pre>" + customizationData + "</pre>";
 
-            fetch('../add-to-cart/cart.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `product_id=${productId}&quantity=${quantity}&size=${size}`
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('cart-count').textContent = data.cart_count;
-                        document.getElementById('cart-count').classList.remove('hidden');
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+            } else {
+                console.log("No customization data found in localStorage.");
+            }
+        };
+
+        function saveCustomizationData() {
+    var customizationData = document.getElementById("customizationData").value;
+    
+    fetch('shoes1.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'saveCustomization=1&customization_data=' + encodeURIComponent(customizationData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            localStorage.setItem("shoeCustomization", customizationData);
+            alert(data.message);
+        } else {
+            alert(data.message);
         }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+// Load customization data on page load
+window.onload = function() {
+    var customizationData = <?php echo json_encode($_SESSION['customization_data'] ?? '{}'); ?>;
+    document.getElementById("customizationData").value = customizationData;
+    localStorage.setItem("shoeCustomization", customizationData);
+};
     </script>
 </body>
 

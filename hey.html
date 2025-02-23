@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Shoe Customizer</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <style>
+    /* Loader Styles */
+    .loading {
+      position: fixed;
+      z-index: 50;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .loader {
+      perspective: 120px;
+      width: 100px;
+      height: 100px;
+      position: relative;
+    }
+    .loader::before {
+      content: "";
+      position: absolute;
+      left: 25px;
+      top: 25px;
+      width: 50px;
+      height: 50px;
+      background-color: #ff0000;
+      animation: flip 1s infinite;
+    }
+    @keyframes flip {
+      0% { transform: rotate(0); }
+      50% { transform: rotateY(180deg); }
+      100% { transform: rotateY(180deg) rotateX(180deg); }
+    }
+
+    /* Canvas full viewport */
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100vh;
+    }
+
+    /* Options and swatches */
+    .options {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      display: flex;
+      gap: 10px;
+    }
+    .option {
+      cursor: pointer;
+      border: 2px solid transparent;
+      padding: 5px;
+      background: rgba(255, 255, 255, 0.8);
+    }
+    .option.--is-active {
+      border-color: #4CAF50;
+    }
+    .option img {
+      max-width: 50px;
+      height: auto;
+      display: block;
+    }
+    .tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      background: rgba(255,255,255,0.8);
+      padding: 10px;
+      z-index: 100;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .tray__swatch {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #ddd;
+      cursor: pointer;
+      flex-shrink: 0;
+      background-size: cover;
+      margin-right: 5px;
+    }
+    /* Save button styling */
+    #saveCustomization {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 110;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    /* Info message styling */
+    .info {
+      position: absolute;
+      top: 80px;
+      left: 20px;
+      z-index: 100;
+      background: rgba(255,255,255,0.8);
+      padding: 10px;
+      border-radius: 4px;
+    }
+    /* Container for the saved image */
+    .saved-image-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 200;
+      background: #fff;
+      border: 2px solid #4CAF50;
+      padding: 10px;
+      max-width: 300px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .saved-image-container h3 {
+      margin-top: 0;
+    }
+    .saved-image-container img {
+      width: 100%;
+      display: block;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading" id="js-loader">
+    <div class="loader"></div>
+  </div>
+
+  <h2 style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index:110;">MAKE THE SHOE IN YOUR OWN STYLE</h2>
+
+  <!-- Options to select shoe parts -->
+  <div class="options">
+    <div class="option --is-active" data-option="Front">
+      <img src="./image/front.bmp" alt="Front" />
+    </div>
+    <div class="option" data-option="Back">
+      <img src="./image/back.bmp" alt="Back" />
+    </div>
+    <div class="option" data-option="Side">
+      <img src="./image/side.bmp" alt="Side" />
+    </div>
+    <div class="option" data-option="Cube004">
+      <img src="./image/main.bmp" alt="Main" />
+    </div>
+    <div class="option" data-option="back">
+      <img src="./image/back-top.bmp" alt="Back Top" />
+    </div>
+  </div>
+
+  <!-- Three.js Canvas -->
+  <canvas id="c"></canvas>
+
+  <!-- Tray for swatches -->
+  <div class="tray" id="js-tray">
+    <div class="tray__slide" id="js-tray-slide"></div>
+  </div>
+
+  <!-- Info message -->
+  <div class="info">
+    <p>
+      <strong>Grab</strong> to rotate shoe, <strong>Scroll</strong> to zoom.
+      <strong>Drag</strong> swatches to view more.
+    </p>
+  </div>
+
+  <!-- Save Customization Button -->
+  <button type="button" id="saveCustomization">Save Customization</button>
+
+  <!-- Container to display the saved image -->
+  <div class="saved-image-container" id="savedImageContainer" style="display:none;">
+    <h3>Saved Customization</h3>
+    <img id="savedImage" src="" alt="Your saved customization" />
+  </div>
+
+  <!-- Three.js Libraries -->
+  <script src="https://unpkg.com/three@0.127.0/build/three.js"></script>
+  <script src="https://unpkg.com/three@0.127.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Basic Three.js and scene setup
+      const LOADER = document.getElementById('js-loader');
+      const TRAY = document.getElementById('js-tray-slide');
+      const canvas = document.getElementById('c');
+      const saveBtn = document.getElementById('saveCustomization');
+      const savedImageContainer = document.getElementById('savedImageContainer');
+      const savedImage = document.getElementById('savedImage');
+
+      let theModel;
+      const MODEL_PATH = "shoe.glb";
+      let activeOption = 'Front';
+      let loaded = false;
+      let initRotate = 0;
+      const BACKGROUND_COLOR = 0xf1f1f1;
+
+      // Colors for customization (array of textures and colors)
+      const colors = [
+        { texture: './image/anim.jpg', size: [2, 2, 2], shininess: 60 },
+        { texture: './image/fabric_.jpg', size: [4, 4, 4], shininess: 0 },
+        { texture: './image/pattern_.jpg', size: [8, 8, 8], shininess: 10 },
+        { texture: './image/denim_.jpg', size: [3, 3, 3], shininess: 0 },
+        { texture: './image/quilt_.jpg', size: [6, 6, 6], shininess: 0 },
+        { color: '131417' },
+        { color: '374047' },
+        // Add more colors as needed...
+      ];
+
+      // Scene setup
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(BACKGROUND_COLOR);
+      scene.fog = new THREE.Fog(BACKGROUND_COLOR, 20, 100);
+
+      // Renderer setup
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.shadowMap.enabled = true;
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // Camera setup
+      const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 0, 5);
+
+      // Initial material for model parts
+      const INITIAL_MTL = new THREE.MeshPhongMaterial({ color: BACKGROUND_COLOR, shininess: 10 });
+      const INITIAL_MAP = [
+        { childID: "Front", mtl: INITIAL_MTL },
+        { childID: "Back", mtl: INITIAL_MTL },
+        { childID: "Side", mtl: INITIAL_MTL },
+        { childID: "Cube004", mtl: INITIAL_MTL },
+        { childID: "back", mtl: INITIAL_MTL }
+      ];
+
+      // Load GLTF model
+      const loader = new THREE.GLTFLoader();
+      loader.load(MODEL_PATH, function(gltf) {
+        theModel = gltf.scene;
+        theModel.traverse(o => {
+          if(o.isMesh) {
+            o.castShadow = true;
+            o.receiveShadow = true;
+          }
+        });
+        theModel.scale.set(1.6, 1.6, 1.6);
+        theModel.rotation.y = Math.PI;
+        theModel.position.y = 0;
+        INITIAL_MAP.forEach(object => {
+          initColor(theModel, object.childID, object.mtl);
+        });
+        scene.add(theModel);
+        LOADER.style.display = 'none';
+      }, undefined, function(error) {
+        console.error(error);
+      });
+
+      function initColor(parent, type, mtl) {
+        parent.traverse(o => {
+          if(o.isMesh && o.name.includes(type)) {
+            o.material = mtl;
+            o.nameID = type;
+          }
+        });
+      }
+
+      // Lighting
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.61);
+      hemiLight.position.set(0,50,0);
+      scene.add(hemiLight);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.54);
+      dirLight.position.set(-8,12,8);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize = new THREE.Vector2(1024,1024);
+      scene.add(dirLight);
+
+      // Floor
+      const floorGeometry = new THREE.PlaneGeometry(5000,5000,1,1);
+      const floorMaterial = new THREE.MeshPhongMaterial({ color: 0xeeeeee, shininess: 0 });
+      const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+      floor.rotation.x = -Math.PI/2;
+      floor.receiveShadow = true;
+      floor.position.y = -1;
+      scene.add(floor);
+
+      // Orbit Controls
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.maxPolarAngle = Math.PI/2;
+      controls.minPolarAngle = Math.PI/3;
+      controls.enableDamping = true;
+      controls.enablePan = false;
+      controls.dampingFactor = 0.1;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.2;
+
+      // Render loop
+      function animate() {
+        controls.update();
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+        if(resizeRendererToDisplaySize(renderer)) {
+          camera.aspect = canvas.clientWidth / canvas.clientHeight;
+          camera.updateProjectionMatrix();
+        }
+        if(theModel && !loaded) {
+          initialRotation();
+        }
+      }
+      animate();
+
+      function resizeRendererToDisplaySize(renderer) {
+        const canvas = renderer.domElement;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if(needResize) {
+          renderer.setSize(width, height, false);
+        }
+        return needResize;
+      }
+
+      function initialRotation() {
+        initRotate++;
+        if(initRotate <= 120) {
+          theModel.rotation.y += Math.PI/60;
+        } else {
+          loaded = true;
+        }
+      }
+
+      // Build color swatches
+      function buildColors(colors) {
+        colors.forEach((color, i) => {
+          const swatch = document.createElement('div');
+          swatch.classList.add('tray__swatch');
+          if(color.texture) {
+            swatch.style.backgroundImage = "url(" + color.texture + ")";
+          } else {
+            swatch.style.background = "#" + color.color;
+          }
+          swatch.setAttribute('data-key', i);
+          TRAY.appendChild(swatch);
+        });
+      }
+      buildColors(colors);
+
+      // Option selection
+      document.querySelectorAll(".option").forEach(option => {
+        option.addEventListener('click', function() {
+          document.querySelectorAll(".option").forEach(opt => opt.classList.remove('--is-active'));
+          this.classList.add('--is-active');
+          activeOption = this.getAttribute('data-option');
+        });
+      });
+
+      // Swatch selection
+      TRAY.querySelectorAll(".tray__swatch").forEach(swatch => {
+        swatch.addEventListener('click', function() {
+          const color = colors[parseInt(this.dataset.key)];
+          let new_mtl;
+          if(color.texture) {
+            const txt = new THREE.TextureLoader().load(color.texture);
+            txt.repeat.set(color.size[0], color.size[1], color.size[2]);
+            txt.wrapS = THREE.RepeatWrapping;
+            txt.wrapT = THREE.RepeatWrapping;
+            new_mtl = new THREE.MeshPhongMaterial({ map: txt, shininess: color.shininess || 10 });
+          } else {
+            new_mtl = new THREE.MeshPhongMaterial({ color: parseInt('0x' + color.color), shininess: color.shininess || 10 });
+          }
+          setMaterial(theModel, activeOption, new_mtl);
+        });
+      });
+
+      function setMaterial(parent, type, mtl) {
+        parent.traverse(o => {
+          if(o.isMesh && o.nameID === type) {
+            o.material = mtl;
+          }
+        });
+      }
+
+      // Save customization (screenshot) and display saved image
+      saveBtn.addEventListener('click', async function() {
+        if (!theModel) {
+          alert("Model not fully loaded. Please wait.");
+          return;
+        }
+        // Update scene and render before capture
+        controls.update();
+        renderer.render(scene, camera);
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Capture canvas screenshot
+        const dataURL = canvas.toDataURL('image/png');
+
+        // Send the dataURL to the PHP script via AJAX (using fetch)
+        fetch('save_customization.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: 'imageData=' + encodeURIComponent(dataURL)
+        })
+        .then(response => response.text())
+        .then(result => {
+          // Expecting the PHP to return the saved file path
+          // Display the saved image in the container
+          savedImage.src = result;
+          savedImageContainer.style.display = 'block';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

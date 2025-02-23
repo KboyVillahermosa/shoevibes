@@ -5,9 +5,10 @@ include 'database.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $customization_data = '{}'; // Initialize with empty JSON object
 
-    $stmt = $conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $email, $password);
+    $stmt = $conn->prepare("INSERT INTO users (email, password, customization_data) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $email, $password, $customization_data);
 
     if ($stmt->execute()) {
         $_SESSION['success'] = "Registration successful!";
