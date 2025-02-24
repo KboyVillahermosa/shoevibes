@@ -221,7 +221,7 @@ session_start();
     <button type="submit" id="saveCustomization">Save Customization</button>
   </form>
   <div class="back-button">
-    <button class="back-btn">Back</button>
+    <a href="./shoes-preview/shoes1.php"><button class="back-btn">Back</button></a> 
   </div>
 
   <!-- Three.js Libraries -->

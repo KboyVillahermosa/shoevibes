@@ -10,7 +10,7 @@ $customization_error = "";
 $customization_success = "";
 
 // ** NEW: Handle Image and Customization Data from POST **
-if(isset($_POST['imageData']) && isset($_POST['customizationData'])) {
+if (isset($_POST['imageData']) && isset($_POST['customizationData'])) {
     $imageData = $_POST['imageData'];
     $customizationData = $_POST['customizationData'];
 
@@ -25,22 +25,22 @@ if(isset($_POST['imageData']) && isset($_POST['customizationData'])) {
 
     $timestamp = time();
     $imageFileName = $folderPath . "custom_shoe_" . $timestamp . ".png";
-    $jsonFileName  = $folderPath . "custom_shoe_" . $timestamp . ".json";
+    $jsonFileName = $folderPath . "custom_shoe_" . $timestamp . ".json";
 
     $imageSaved = file_put_contents($imageFileName, $decodedImage);
     $jsonSaved = file_put_contents($jsonFileName, $customizationData);
 
-    if($imageSaved && $jsonSaved) {
+    if ($imageSaved && $jsonSaved) {
         $customization_success = "Customization saved successfully!<br>";
         $customization_success .= "<img src='$imageFileName' alt='Customized Shoe' style='max-width:300px;'/><br>";
-         // Construct the correct relative path to the JSON file
-         $jsonPath = 'shoes-preview/' . $folderPath . basename($jsonFileName);
-         $customization_success .= "<a href='../view_customization.php?json=" . urlencode($jsonPath) . "' target='_blank'>View 3D Customization</a>";
+        // Construct the correct relative path to the JSON file
+        $jsonPath = 'shoes-preview/' . $folderPath . basename($jsonFileName);
+        $customization_success .= "<a href='../view_customization.php?json=" . urlencode($jsonPath) . "' target='_blank'>View 3D Customization</a>";
 
-          // Store data in session:
-          $_SESSION['customized_image'] = $imageFileName; // image path
-          $_SESSION['customized_json'] = $jsonPath; // json path
-          $_SESSION['customization_success'] = $customization_success; // all messages
+        // Store data in session:
+        $_SESSION['customized_image'] = $imageFileName; // image path
+        $_SESSION['customized_json'] = $jsonPath; // json path
+        $_SESSION['customization_success'] = $customization_success; // all messages
 
     } else {
         $customization_error = "Error saving the customization.";
@@ -51,13 +51,79 @@ if(isset($_POST['imageData']) && isset($_POST['customizationData'])) {
 if (isset($_SESSION['customization_success'])) {
     $customization_success = $_SESSION['customization_success'];
 
-}
-else {
-    $customization_success ="";
+} else {
+    $customization_success = "";
 }
 
 // Get product ID from URL, default to 1
 $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 1; //Sanitize input, ensure integer
+
+// Handle add to cart functionality
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_cart'])) {
+    $product_id = $_POST['product_id'];
+    $quantity = $_POST['quantity'];
+    $size = $_POST['size'];
+
+    // Fetch product details from database
+    $sql = "SELECT product_name, price, image_url FROM products WHERE product_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $product = $result->fetch_assoc();
+        $item = [
+            'product_id' => $product_id,
+            'product_name' => $product['product_name'], // Corrected key
+            'price' => $product['price'],
+            'quantity' => $quantity,
+            'size' => $size,
+            'image_url' => $product['image_url'] // Store the image URL
+        ];
+
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
+
+        // Check if item already exists in cart (same product and size)
+        $found = false;
+        foreach ($_SESSION['cart'] as &$cart_item) {
+            if ($cart_item['product_id'] == $product_id && $cart_item['size'] == $size) {
+                $cart_item['quantity'] += $quantity; // Update quantity
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            $_SESSION['cart'][] = $item;
+        }
+
+        // Calculate total items in cart
+        $cart_count = array_sum(array_column($_SESSION['cart'], 'quantity'));
+
+        // Redirect back to the product page after adding to cart
+        header('Location: shoes1.php?product_id=' . $product_id . '&cart_count=' . $cart_count);
+        exit();
+    } else {
+        $order_message = "Error: Product not found.";
+    }
+}
+
+// Handle item deletion
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_item'])) {
+    $index = $_POST['index'];
+    if (isset($_SESSION['cart'][$index])) {
+        array_splice($_SESSION['cart'], $index, 1); // Remove the item
+    }
+
+    // Recalculate total items in cart
+    $cart_count = array_sum(array_column($_SESSION['cart'], 'quantity'));
+
+    header('Location: shoes1.php?product_id=' . $product_id . '&cart_count=' . $cart_count); // Redirect back to the product page
+    exit;
+}
 
 // Fetch product details
 $sql = "SELECT * FROM products WHERE product_id = ?";
@@ -91,7 +157,7 @@ if (isset($_GET['customized']) && $_GET['customized'] == 'true') {
                     // Store the customization data in a hidden input field
                     document.getElementById("customizationData").value = customizationData;
                     // Display customization data for testing
-                    document.getElementById("customizationDisplay").innerHTML = "<p><b>Customization Data (JSON):</b></p><pre>" + customizationData + "</pre>";
+                    document.getElementById("customizationDisplay").innerHTML = "<p><b>Customization Data (JSON):</b></p><pre>" . customizationData + "</pre>";
                 } else {
                     console.log("No customization data found in localStorage.");
                     document.getElementById("customizationDisplay").innerHTML = "<p>No customization data available.</p>";
@@ -101,7 +167,7 @@ if (isset($_GET['customized']) && $_GET['customized'] == 'true') {
 }
 
 // Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['imageData']) && !isset($_POST['customizationData'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['imageData']) && !isset($_POST['customizationData']) && !isset($_POST['add_to_cart'])) {
     // Sanitize and validate input
     $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
     $size = isset($_POST['size']) ? filter_var($_POST['size'], FILTER_SANITIZE_STRING) : '';
@@ -114,8 +180,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['imageData']) && !isse
     $city = isset($_POST['city']) ? filter_var($_POST['city'], FILTER_SANITIZE_STRING) : '';
     $province = isset($_POST['province']) ? filter_var($_POST['province'], FILTER_SANITIZE_STRING) : '';
     $postalCode = isset($_POST['postalCode']) ? filter_var($_POST['postalCode'], FILTER_SANITIZE_STRING) : '';
-
-    // NEW: Get customization data from the form (It's populated by JS)
     $customization_data = isset($_POST['customization_data']) ? $_POST['customization_data'] : '';
 
     // Validate required fields
@@ -145,7 +209,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['imageData']) && !isse
 
                 if ($stmt_insert) {
                     $stmt_insert->bind_param("iisdssssssssss", $product_id, $quantity, $size, $total_price, $firstName, $lastName, $phone, $email, $street, $barangay, $city, $province, $postalCode, $customization_data);
-                     if ($stmt_insert->execute()) {
+                    if ($stmt_insert->execute()) {
                         $order_message = "Order submitted successfully!";
                         $thank_you_message = "Thank you for choosing ShoeVibes!";
                         echo '<script>setTimeout(function(){ document.getElementById("thankYouModal").classList.remove("hidden"); }, 500);</script>';
@@ -166,14 +230,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['imageData']) && !isse
     }
 }
 
-if(isset($_POST['saveCustomization'])) {
+if (isset($_POST['saveCustomization'])) {
     $customization_data = $_POST['customization_data'];
     $user_id = $_SESSION['user_id'];
 
     $stmt = $conn->prepare("UPDATE users SET customization_data = ? WHERE id = ?");
     $stmt->bind_param("si", $customization_data, $user_id);
-    
-    if($stmt->execute()) {
+
+    if ($stmt->execute()) {
         $_SESSION['customization_data'] = $customization_data;
         echo json_encode(['status' => 'success', 'message' => 'Customization saved successfully']);
     } else {
@@ -245,6 +309,8 @@ if(isset($_POST['saveCustomization'])) {
             border: 1px solid black;
             padding: 10px;
             border-radius: 10px;
+            width: 100%;
+            margin-bottom: 10px;
         }
 
         .add-to-cart-button:hover {
@@ -363,11 +429,13 @@ if(isset($_POST['saveCustomization'])) {
                                 class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Shop</a>
                         </li>
                         <li>
-                            <a href="../add-to-cart/add_to_cart.php"
+                            <a href="shoes1.php?show_cart=true&product_id=<?php echo $product_id; ?>"
                                 class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                                 Cart
                                 <span id="cart-count"
-                                    class="bg-red-500 text-white rounded-full px-2 py-0.5 text-xs ml-1 hidden">0</span>
+                                    class="bg-red-500 text-white rounded-full px-2 py-0.5 text-xs ml-1 <?php echo (isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) ? '' : 'hidden'; ?>">
+                                    <?php echo isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'quantity')) : 0; ?>
+                                </span>
                             </a>
                         </li>
                     </ul>
@@ -376,6 +444,47 @@ if(isset($_POST['saveCustomization'])) {
         </nav>
     </section>
 
+    <!-- Shopping Cart Section -->
+    <?php if (isset($_GET['show_cart']) && $_GET['show_cart'] == 'true'): ?>
+        <div class="container mx-auto mt-8">
+            <h1 class="text-2xl font-bold mb-4">Your Shopping Cart</h1>
+            <?php if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])): ?>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <?php foreach ($_SESSION['cart'] as $index => $item): ?>
+                        <div class="mb-4 pb-4 border-b flex justify-between items-center">
+                            <div>
+                            <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="Product Image" class="h-16 w-16 object-cover mr-4">
+                                <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($item['product_name']); ?></h2>
+                                <p>Size: <?php echo htmlspecialchars($item['size']); ?></p>
+                                <p>Quantity: <?php echo htmlspecialchars($item['quantity']); ?></p>
+                                <p>Price: ₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
+                            </div>
+                            <form method="post" action="shoes1.php?product_id=<?php echo $product_id; ?>&show_cart=true">
+                                <input type="hidden" name="index" value="<?php echo $index; ?>">
+                                <button type="submit" name="remove_item" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                                    Remove
+                                </button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
+
+                    <div class="mt-4">
+                        <h3 class="text-xl font-bold">Total: ₱<?php
+                            $total = array_sum(array_map(function ($item) {
+                                return $item['price'] * $item['quantity'];
+                            }, $_SESSION['cart']));
+                            echo number_format($total, 2);
+                            ?></h3>
+                    </div>
+                </div>
+            <?php else: ?>
+                <p>Your cart is empty.</p>
+            <?php endif; ?>
+            <a href="shoes1.php?product_id=<?php echo $product_id; ?>" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Continue Shopping</a>
+        </div>
+    <?php else: ?>
+
+   
     <section class="py-6 px-4 max-w-5xl mx-auto">
         <h1 class="mb-8 text-3xl font-extrabold text-gray-800">Product Page</h1>
 
@@ -460,10 +569,18 @@ if(isset($_POST['saveCustomization'])) {
                                 <button class="quantity-button" onclick="updateQuantity(1)">+</button>
                             </div>
 
+                            <!-- Add to cart Section-->
+                            <form method="post" action="shoes1.php?product_id=<?php echo $product_id; ?>">
+                            <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
+                            <input type="hidden" name="quantity" id="quantity" value="1">
+                            <input type="hidden" name="size" id="size" value="">
+                            <button type="submit" name="add_to_cart" class="add-to-cart-button">Add to Cart</button>
+                            </form>
+
                             <!-- Buttons -->
                             <div class="flex flex-col gap-4">
-                                <button class="add-to-cart-button"
-                                    onclick="addToCart(<?php echo $product_id; ?>)">Add to Cart</button>
+                                <!-- <button class="add-to-cart-button"
+                                    onclick="addToCart(<?php echo $product_id; ?>)">Add to Cart</button> -->
                                 <button onclick="openSidebar()" class="order-now-button">Order Now - Cash on
                                     Delivery</button>
                             </div>
@@ -498,7 +615,7 @@ if(isset($_POST['saveCustomization'])) {
             <input type="hidden" name="quantity" id="modal_quantity" value="1">
             <input type="hidden" name="size" id="modal_size" value="">
             <p>Quantity: <span id="modalQuantity">1</span></p>
-            <p>Size: <span>Not selected</span></p>
+            <p>Size: <span id="modalSize">Not selected</span></p>
             <p>Total: ₱<span id="modalTotal">0.00</span></p>
             <?php if (!empty($order_message)): ?>
                 <div
@@ -575,6 +692,7 @@ if(isset($_POST['saveCustomization'])) {
             </button>
         </div>
     </div>
+    <?php endif; ?>
 
     <script>
         let selectedSize = '';
@@ -678,26 +796,17 @@ if(isset($_POST['saveCustomization'])) {
                 return;
             }
 
-            fetch('add_to_cart.php', { // Path to your add_to_cart.php file
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `product_id=${productId}&quantity=${quantity}&size=${size}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert(data.message); // Show success message
-                    updateCartCount(data.cart_count); // Update the cart count in the navbar
-                } else {
-                    alert(data.message); // Show error message
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while adding to cart.');
-            });
+            // Instead of using fetch to call a separate PHP file, directly submit the form
+            // with the action set to shoes1.php and the name "add_to_cart" on the submit button.
+            // This is necessary because we combined add_to_cart.php into this single file.
+
+            // Update the hidden fields in the form to reflect current quantity and size
+            document.querySelector('input[name="quantity"]').value = quantity;
+            document.querySelector('input[name="size"]').value = size;
+
+            // Since the form is submitted directly, you don't need to handle the response in JavaScript
+            // The PHP code will handle adding the item to the cart and redirecting back to the page
+            // Add any additional client-side validation before form submission here
         }
 
         function updateCartCount(count) {
@@ -750,6 +859,3 @@ window.onload = function() {
     localStorage.setItem("shoeCustomization", customizationData);
 };
     </script>
-</body>
-
-</html>
