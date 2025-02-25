@@ -1,15 +1,16 @@
 <?php
-session_start(); // Start the session at the very top
+session_start();
 
 include '../database.php'; // Database connection (adjust path if needed)
 
-// Initialize messages
+// Set default time zone
+date_default_timezone_set('Asia/Manila');
+
 $order_message = "";
 $thank_you_message = "";
 $customization_error = "";
 $customization_success = "";
 
-// ** NEW: Handle Image and Customization Data from POST **
 if (isset($_POST['imageData']) && isset($_POST['customizationData'])) {
     $imageData = $_POST['imageData'];
     $customizationData = $_POST['customizationData'];
@@ -616,19 +617,15 @@ if (isset($_POST['saveCustomization'])) {
             <input type="hidden" name="size" id="modal_size" value="">
             <p>Quantity: <span id="modalQuantity">1</span></p>
             <p>Size: <span id="modalSize">Not selected</span></p>
-            <p>Total: ₱<span id="modalTotal">0.00</span></p>
-            <?php if (!empty($order_message)): ?>
-                <div
-                    class="mb-4 text-sm <?php echo strpos($order_message, 'Error') !== false ? 'text-red-500' : 'text-green-500'; ?>">
-                    <?php echo $order_message; ?>
-                </div>
-            <?php endif; ?>
+            <p class="mb-8">Total: ₱<span id="modalTotal">0.00</span></p>
+          
         <?php else: ?>
             <p class="text-red-500">Product details not found.</p>
         <?php endif; ?>
 
         <!-- Order Form -->
-        <form id="orderForm" method="post" action="?product_id=<?php echo $product_id; ?>">
+        <form id="orderForm" method="post" action="sidebar.php?product_id=<?php echo $product_id; ?>">
+
             <input type="hidden" name="quantity" id="quantity" value="1">
             <input type="hidden" name="size" id="size" value="">
             <!-- Hidden input for customization data -->
@@ -859,3 +856,4 @@ window.onload = function() {
     localStorage.setItem("shoeCustomization", customizationData);
 };
     </script>
+

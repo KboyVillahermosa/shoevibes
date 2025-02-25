@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id'])) {
     <style>
     /* Fixed container for the canvas */
     #model-container {
-      width: 800PX;  /* Use full width of the parent */
+      width: 600PX;  /* Use full width of the parent */
       height: 60vh; /* Adjust the height as a percentage of the viewport height */
       position: relative;
       min-height: 300px; /* prevent the container from collapsing too much */
