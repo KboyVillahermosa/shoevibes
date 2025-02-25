@@ -1,11 +1,9 @@
 <?php
-session_start();
+session_start(); // Start the session at the very top
 
-include '../database.php'; // Database connection (adjust path if needed)
+include '../database.php'; 
 
-// Set default time zone
-date_default_timezone_set('Asia/Manila');
-
+// Initialize messages
 $order_message = "";
 $thank_you_message = "";
 $customization_error = "";
