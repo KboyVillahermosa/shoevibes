@@ -1,15 +1,14 @@
 <?php
-session_start(); // Start the session at the very top
+session_start(); 
 
-include '../database.php'; // Database connection (adjust path if needed)
+include '../database.php'; 
 
-// Initialize messages
+
 $order_message = "";
 $thank_you_message = "";
 $customization_error = "";
 $customization_success = "";
 
-// ** NEW: Handle Image and Customization Data from POST **
 if (isset($_POST['imageData']) && isset($_POST['customizationData'])) {
     $imageData = $_POST['imageData'];
     $customizationData = $_POST['customizationData'];
