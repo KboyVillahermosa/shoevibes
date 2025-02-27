@@ -33,11 +33,76 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.1/dist/flowbite.min.css" rel="stylesheet">
-</head>
-<body class="bg-white flex items-center justify-center min-h-screen">
+    <style>
+        body {
+            background-color: #FFFFFF; /* White background */
+            overflow: hidden; /* Prevent scrollbars caused by circles */
+        }
 
-    <div class="bg-[#F8F8FF] p-8 rounded-lg shadow-lg w-96 text-center border border-gray-200">
-        <h2 class="text-xl font-bold text-black mb-6">Login</h2>
+        .login-container {
+            width: 360px; /* Adjust width as needed */
+            padding: 2rem;
+            border-radius: 0.5rem;
+            position: relative; /* For absolute positioning of circles */
+            z-index: 1; /* Ensure login form is above circles */
+        }
+
+        .input-field {
+            border: 1px solid #D1D5DB; /* Thin grey border */
+            border-radius: 0.375rem; /* Rounded corners */
+            padding: 0.75rem;
+            color: #4B5563; /* Dark grey text */
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #9CA3AF; /* Slightly darker grey on focus */
+            box-shadow: none;
+        }
+
+        .circle {
+            width: 300px; /* Adjust size as needed */
+            height: 300px;
+            background-color: black;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .circle-left {
+            top: -50px; /* Adjust position as needed */
+            left: -100px; /* Adjust position as needed */
+        }
+
+        .circle-right {
+            top: -50px; /* Adjust position as needed */
+            right: -100px; /* Adjust position as needed */
+        }
+
+        .circle-inner {
+            width: 150px; /* Adjust size as needed */
+            height: 150px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .image-logo{
+            width: 100%;
+            max-width: 240px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+   
+
+    <div class="login-container">
+        <div class="text-center mb-6">
+            <img src="./image/logo4.png" alt="Shoe Vibes Logo" class="image-logo">
+            <h2 class="text-xl font-semibold text-gray-900 mt-3">Login your Account</h2>
+        </div>
 
         <?php if(isset($_SESSION['error'])): ?>
             <div class="bg-red-100 text-red-600 p-3 rounded mb-4">
@@ -46,21 +111,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php endif; ?>
 
         <form action="login.php" method="POST" class="space-y-4">
-            <input type="email" name="email" placeholder="Email" required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-white text-black">
+            <div>
+                <input type="email" name="email" placeholder="Email" required
+                    class="input-field w-full">
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="Password" required
+                    class="input-field w-full">
+            </div>
 
-            <input type="password" name="password" placeholder="Password" required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-white text-black">
-
-            <button type="submit"
-                class="w-full bg-black text-[#F8F8FF] py-2 rounded-lg hover:bg-gray-900 transition duration-200">
-                Login
-            </button>
+            <div>
+                <button type="submit"
+                    class="w-full bg-gray-900 text-white py-2 rounded-md hover:bg-gray-700 transition duration-200">
+                    Login
+                </button>
+            </div>
         </form>
 
-        <p class="mt-4 text-sm text-gray-600">
-            Don't have an account? 
-            <a href="register.php" class="text-black font-semibold hover:underline">Register</a>
+        <p class="mt-4 text-sm text-gray-600 text-center">
+            You don't have an Account?
+            <a href="register.php" class="text-gray-900 font-semibold hover:underline">Create</a>
         </p>
     </div>
 

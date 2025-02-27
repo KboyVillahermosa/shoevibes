@@ -568,13 +568,13 @@ if (isset($_POST['saveCustomization'])) {
                                 <button class="quantity-button" onclick="updateQuantity(1)">+</button>
                             </div>
 
-                            <!-- Add to cart Section-->
                             <form method="post" action="shoes1.php?product_id=<?php echo $product_id; ?>">
-                            <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
-                            <input type="hidden" name="quantity" id="quantity" value="1">
-                            <input type="hidden" name="size" id="size" value="">
-                            <button type="submit" name="add_to_cart" class="add-to-cart-button">Add to Cart</button>
-                            </form>
+    <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
+    <input type="hidden" name="quantity" id="cartQuantity" value="1">
+    <input type="hidden" name="size" id="cartSize" value="">
+    <button type="submit" name="add_to_cart" class="add-to-cart-button">Add to Cart</button>
+</form>
+
 
                             <!-- Buttons -->
                             <div class="flex flex-col gap-4">
@@ -853,5 +853,11 @@ window.onload = function() {
     document.getElementById("customizationData").value = customizationData;
     localStorage.setItem("shoeCustomization", customizationData);
 };
+
+
+
+//review
+
+
     </script>
 

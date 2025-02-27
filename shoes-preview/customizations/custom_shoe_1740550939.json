@@ -1,0 +1,1 @@
+{"parts":{"Front":{"type":"texture","value":"./image/pattern_.jpg","size":[8,8,8],"shininess":10},"Back":{"type":"texture","value":"./image/quilt_.jpg","size":[6,6,6],"shininess":10},"Side":{"type":"initial"},"Cube004":{"type":"texture","value":"./image/quilt_.jpg","size":[6,6,6],"shininess":10},"back":{"type":"initial"}}}
