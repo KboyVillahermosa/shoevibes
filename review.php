@@ -1,5 +1,5 @@
 <?php
-
+session_start(); // Start the session at the very beginning
 
 $servername = "localhost";
 $username = "root";
@@ -27,7 +27,7 @@ if (!isset($_SESSION['form_token'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate the token
     if (!isset($_POST['form_token']) || $_POST['form_token'] !== $_SESSION['form_token']) {
-        $submissionError = "You already submitted.";
+        $submissionError = "Invalid submission. Please try again."; // Changed error message for clarity
     } else {
         // Token is valid, process the form
         if (isset($_POST['name']) && !empty($_POST['name']) &&
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         {
             $name = $_POST['name'];
             $email = $_POST['email'];
-            $rating = $_POST['rating'];
+            $rating = (int)$_POST['rating']; // Ensure rating is an integer
             $review_title = isset($_POST['review_title']) ? $_POST['review_title'] : ''; // Optional field
             $review = $_POST['review'];
 
@@ -54,17 +54,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
 
-            $stmt = $conn->prepare("INSERT INTO reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssisss", $name, $email, $rating, $review_title, $review, $imagePath);
-            if ($stmt->execute()) {
-                $reviewSubmitted = true;
+            // Improved error handling during database interaction
+            try {
+                $stmt = $conn->prepare("INSERT INTO reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
+                if ($stmt === false) {
+                    throw new Exception("Prepare failed: " . $conn->error);
+                }
+                $stmt->bind_param("ssisss", $name, $email, $rating, $review_title, $review, $imagePath);
+                if ($stmt->execute()) {
+                    $reviewSubmitted = true;
 
-                // Invalidate the token after successful submission
-                unset($_SESSION['form_token']);
-            } else {
-                $submissionError = "Error: " . $stmt->error;
+                    // Invalidate the token after successful submission
+                    unset($_SESSION['form_token']);
+                    $_SESSION['form_token'] = generate_token(); // Generate a new token for the next submission
+                } else {
+                    throw new Exception("Execute failed: " . $stmt->error);
+                }
+                $stmt->close();
+            } catch (Exception $e) {
+                $submissionError = "Error: " . $e->getMessage();
             }
-            $stmt->close();
         } else {
             $submissionError = "Please fill in all required fields.";
         }
@@ -79,10 +88,16 @@ $sql_stats = "SELECT rating, COUNT(*) AS count FROM reviews GROUP BY rating";
 $result_stats = $conn->query($sql_stats);
 $rating_counts = [];
 $total_reviews = 0;
+$total_rating = 0; // Add this line
 while ($row = $result_stats->fetch_assoc()) {
     $rating_counts[$row['rating']] = intval($row['count']);
     $total_reviews += intval($row['count']);
+    $total_rating += intval($row['rating']) * intval($row['count']); // And this line
 }
+
+// Calculate average rating
+$average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1) : 0;
+
 ?>
 
 <!DOCTYPE html>
@@ -114,6 +129,11 @@ while ($row = $result_stats->fetch_assoc()) {
         </div>
     <?php endif; ?>
 
+     <!-- Display Average Rating -->
+     <div class="mb-4">
+        <h3 class="text-xl font-semibold text-gray-700">Average Rating: <?= $average_rating ?> / 5 (<?= $total_reviews ?> reviews)</h3>
+    </div>
+
     <form action="" method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <!-- Add the hidden token field -->
         <input type="hidden" name="form_token" value="<?php echo htmlspecialchars($_SESSION['form_token']); ?>">
@@ -133,7 +153,7 @@ while ($row = $result_stats->fetch_assoc()) {
             <div class="flex items-center">
                 <?php for ($i = 1; $i <= 5; $i++): ?>
                     <input type="radio" id="star<?= $i ?>" name="rating" value="<?= $i ?>" class="hidden" required>
-                    <label for="star<?= $i ?>" class="text-3xl cursor-pointer text-gray-400 hover:text-yellow-500 focus:text-yellow-500">
+                    <label for="star<?= $i ?>" class="text-3xl cursor-pointer text-gray-400 hover:text-black focus:text-black">
                         <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 1c1.939 0 3.683 1.476 4.489 3.955l6.572.955-4.756 4.645 1.123 6.545z"/></svg>
                     </label>
                 <?php endfor; ?>
@@ -149,7 +169,6 @@ while ($row = $result_stats->fetch_assoc()) {
             <label class="block text-gray-700 text-sm font-bold mb-2" for="review">Review:</label>
             <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="review" name="review" rows="4" required></textarea>
         </div>
-
         <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="image">Upload Image (optional):</label>
             <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
@@ -226,3 +245,6 @@ while ($row = $result_stats->fetch_assoc()) {
     </script>
 </body>
 </html>
+<?php
+$conn->close();
+?>

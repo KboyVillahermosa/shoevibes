@@ -56,3 +56,15 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
+
+-- create the reviews table
+CREATE TABLE reviews (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    email VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    rating INT(11) NOT NULL,
+    review_title VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    review TEXT COLLATE utf8mb4_general_ci NOT NULL,
+    image VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

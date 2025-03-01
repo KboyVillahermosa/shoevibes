@@ -22,7 +22,7 @@ if(isset($_POST['imageData']) && isset($_POST['customizationData'])) {
     if($imageSaved && $jsonSaved) {
         echo "Customization saved successfully!<br>";
         echo "<img src='$imageFileName' alt='Customized Shoe' style='max-width:300px;'/><br>";
-        echo "<a href='view_customization.php?json=$jsonFileName' target='_blank'>View 3D Customization</a>";
+        echo "<a href='view_customization2.php?json=$jsonFileName' target='_blank'>View 3D Customization</a>";
     } else {
         echo "Error saving the customization.";
     }

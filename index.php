@@ -183,7 +183,7 @@ if (!isset($_SESSION['user_id'])) {
       </div>
     </div>
   </section>
-  
+
   <section>
     <div class="products-title">
       <h1 class="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-4xl">
@@ -212,6 +212,10 @@ if (!isset($_SESSION['user_id'])) {
       </div>
 
     </div>
+  </section>
+  <section>
+    <?php
+    include 'review.php'; ?>
   </section>
 
 
