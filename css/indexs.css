@@ -46,3 +46,15 @@
     border-radius: 10px;
 }
 
+/* styles.css */
+.bg-section {
+    background-image: url('../image/bg.svg'); /* Path to your image */
+    background-size: cover; /* Ensure it covers the section */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent repeating */
+    min-height: 100vh; /* Full screen height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  

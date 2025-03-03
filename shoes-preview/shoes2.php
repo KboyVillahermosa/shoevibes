@@ -43,10 +43,52 @@ if (isset($_POST['imageData']) && isset($_POST['customizationData'])) {
         $_SESSION['customized_image_' . $product_id] = $imageFileName; // image path
         $_SESSION['customized_json_' . $product_id] = $jsonPath; // json path
         $_SESSION['customization_success_' . $product_id] = $customization_success; // all messages
-
+        $_SESSION['customization_data_' . $product_id] = $customizationData; // Store customization data
     } else {
         $customization_error = "Error saving the customization.";
     }
+}
+
+// Handle Delete Customization
+if (isset($_POST['delete_customization'])) {
+    $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 2; // Get product ID
+
+    // Get image and JSON file paths from session
+    $imageFileName = $_SESSION['customized_image_' . $product_id] ?? null;
+    $jsonPath = $_SESSION['customized_json_' . $product_id] ?? null;
+
+    // Delete image file
+    if ($imageFileName && file_exists($imageFileName)) {
+        if (unlink($imageFileName)) {
+            // Successfully deleted
+        } else {
+            error_log("Error deleting image file: " . $imageFileName);
+            // Display an error message to the user (optional)
+        }
+    }
+
+    // Extract the JSON filename from the path and delete the JSON file
+    if ($jsonPath) {
+        $jsonFileName = 'shoes-preview/' . $jsonPath;
+        if (file_exists($jsonFileName)) {
+            if (unlink($jsonFileName)) {
+                // Successfully deleted
+            } else {
+                error_log("Error deleting JSON file: " . $jsonFileName);
+                // Display an error message to the user (optional)
+            }
+        }
+    }
+
+    // Clear session variables
+    unset($_SESSION['customized_image_' . $product_id]);
+    unset($_SESSION['customized_json_' . $product_id]);
+    unset($_SESSION['customization_success_' . $product_id]);
+    unset($_SESSION['customization_data_' . $product_id]);
+
+    // Redirect to refresh the page
+    header('Location: shoes2.php?product_id=' . $product_id);
+    exit();
 }
 
 // Retrieve data from session (if available), using product-specific keys:
@@ -183,7 +225,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['imageData']) && !isse
                 $sql_insert = "INSERT INTO orders (product_id, quantity, size, total_price, first_name, last_name, phone, email, street, barangay, city, province, postal_code, customization_data)
                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt_insert = $conn->prepare($sql_insert);
-
                 if ($stmt_insert) {
                     $stmt_insert->bind_param("iisdssssssssss", $product_id, $quantity, $size, $total_price, $firstName, $lastName, $phone, $email, $street, $barangay, $city, $province, $postalCode, $customization_data);
                     if ($stmt_insert->execute()) {
@@ -271,7 +312,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Improved error handling during database interaction
             try {
-                $stmt = $conn->prepare("INSERT INTO reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt = $conn->prepare("INSERT INTO shoe2_reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
                 if ($stmt === false) {
                     throw new Exception("Prepare failed: " . $conn->error);
                 }
@@ -295,7 +336,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$sql = "SELECT * FROM reviews ORDER BY created_at DESC";
+$sql = "SELECT * FROM shoe2_reviews ORDER BY created_at DESC";
 $result = $conn->query($sql);
 
 // Calculate star rating statistics
@@ -314,8 +355,6 @@ while ($row = $result_stats->fetch_assoc()) {
 $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1) : 0;
 
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -529,7 +568,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                                 <p>Quantity: <?php echo htmlspecialchars($item['quantity']); ?></p>
                                 <p>Price: ₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
                             </div>
-                            <form method="post" action="shoes1.php?product_id=<?php echo $product_id; ?>&show_cart=true">
+                            <form method="post" action="shoes2.php?product_id=<?php echo $product_id; ?>&show_cart=true">
                                 <input type="hidden" name="index" value="<?php echo $index; ?>">
                                 <button type="submit" name="remove_item"
                                     class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
@@ -587,6 +626,11 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                     <?php
                     if (!empty($customization_success)) {
                         echo $customization_success;
+                        echo '<form method="post" action="shoes2.php?product_id=' . $product_id . '">
+                                  <button type="submit" name="delete_customization" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                      Delete Customization
+                                  </button>
+                              </form>';
                     }
                     if (!empty($customization_error)) {
                         echo "<p class='text-red-500'>" . htmlspecialchars($customization_error) . "</p>";
@@ -662,8 +706,6 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                     </div>
                 </div>
             </div>
-
-
 
         </section>
 
@@ -1090,6 +1132,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             });
         });
 
-</script>
+    </script>
 </body>
+
 </html>

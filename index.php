@@ -43,6 +43,7 @@ if (!isset($_SESSION['user_id'])) {
       align-items: center;
       margin-top: 70px;
       padding: 10px;
+      
     }
 
     .header-content {
@@ -114,6 +115,22 @@ if (!isset($_SESSION['user_id'])) {
         width: 100%;
         max-width: 100px;
       }
+      .new-collection{
+        justify-content: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+       margin-top: 100px;
+       padding: 20px;
+      }
+      .new-collection-content{
+        width: 100%;
+        max-width: 300px;
+      }
+      .new-collection-content img{
+        width: 100%;
+        max-width: 400px;
+      }
   </style>
 </head>
 
@@ -168,9 +185,11 @@ if (!isset($_SESSION['user_id'])) {
   </section>
 
 
-  <section class="">
+  <section class="bg-section">
+    
     <div class="header">
       <div class="header-content">
+        
         <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-6xl">
           Custom Shoes Made Just for You</h1>
         <p class="my-4 text-lg text-gray-500"> At ShoeVibes, we believe that footwear is more than just a necessity it’s
@@ -178,8 +197,6 @@ if (!isset($_SESSION['user_id'])) {
       </div>
       <div class="header-image">
         <div id="model-container"></div>
-
-
       </div>
     </div>
   </section>
@@ -210,13 +227,15 @@ if (!isset($_SESSION['user_id'])) {
       <div class="products-content">
         <img src="./image/s1.png" alt="">
       </div>
-
     </div>
   </section>
-  <section>
-    <?php
-    include 'review.php'; ?>
-  </section>
+  
+  <!------------------------------------------------>
+   <div class="new-collection">
+    <div class="new-collection-content">
+        <img src="./image/newshoes.png" alt="">
+    </div>
+   </div>
 
 
   <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.1/dist/flowbite.min.js"></script>
@@ -287,7 +306,7 @@ if (!isset($_SESSION['user_id'])) {
       const height = container.clientHeight;
 
       renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) // Improve sharpness on high-res devices
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
     }
