@@ -25,24 +25,7 @@ $result = $conn->query("SELECT id, first_name, last_name, email FROM users");
 
 <body class="bg-gray-100">
     <style>
-        .navbar{
-            background: black;
-        }
-        .admin-header{
-            margin-top: 150px;
-        }
-        .navbar-aside{
-            background: black;
-            margin-top: 60px;
-        }
-        .navbar-asides{
-            background: black;
-
-        }
-        .admin-logo{
-            width: 100%;
-            max-width: 80px;
-        }
+      
     </style>
      <?php include_once"admin_nav.php"; ?>
         <section class="admin-header p-4 sm:ml-64">
