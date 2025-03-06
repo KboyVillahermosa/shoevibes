@@ -122,12 +122,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .register-link a:hover {
             text-decoration: underline;
         }
+        .back-home{
+            margin-top: 10px;
+            display: flex;
+            justify-content: start;
+        }
+        .back-home a{
+            direction: none;
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <img src="../image/logo4.png" alt="ShoeVibes Logo"> 
-        <h2>Login your Account</h2>
+        <h2>Admin as Admin</h2>
         <form method="POST" action="">
             <div class="input-group">
                 <label>Username</label>
@@ -142,6 +152,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if (isset($error)): ?>
             <p class="error"><?php echo $error; ?></p>
         <?php endif; ?>
+        <div class="back-home mt-4">
+            <a href="../index.php"><p>Back to home</p></a>
+        </div>
     </div>
 </body>
 </html>
