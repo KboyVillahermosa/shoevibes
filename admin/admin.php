@@ -25,7 +25,18 @@ $result = $conn->query("SELECT id, first_name, last_name, email FROM users");
 
 <body class="bg-gray-100">
     <style>
-      
+      .delete-btn{
+        background: black;
+        padding: 8px;
+      }
+      .name{
+        background-color: white;
+        color: black;
+      }
+      .name-header {
+        background-color: black;
+        color: white;
+      }
     </style>
      <?php include_once"admin_nav.php"; ?>
         <section class="admin-header p-4 sm:ml-64">
@@ -38,8 +49,8 @@ $result = $conn->query("SELECT id, first_name, last_name, email FROM users");
             </div>
         <?php endif; ?>
   
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-100">
+        <thead class="name-header text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th class="px-6 py-3">ID</th>
                     <th class="px-6 py-3">First Name</th>
@@ -50,7 +61,7 @@ $result = $conn->query("SELECT id, first_name, last_name, email FROM users");
             </thead>
             <tbody>
                 <?php while ($row = $result->fetch_assoc()): ?>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <tr class="name border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="px-6 py-4"><?php echo $row['id']; ?></td>
                         <td class="px-6 py-4"><?php echo $row['first_name']; ?></td>
                         <td class="px-6 py-4"><?php echo $row['last_name']; ?></td>
@@ -59,7 +70,7 @@ $result = $conn->query("SELECT id, first_name, last_name, email FROM users");
                             <form action="delete.php" method="POST" onsubmit="return confirm('Are you sure?');">
                                 <input type="hidden" name="user_id" value="<?php echo $row['id']; ?>">
                                 <button type="submit"
-                                    class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-700">Delete</button>
+                                    class="delete-btn bg-black text-white px-4 py-1 rounded hover:bg-red-700">Delete</button>
                             </form>
                         </td>
                     </tr>

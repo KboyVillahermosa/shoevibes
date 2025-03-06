@@ -45,7 +45,10 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             margin-top: 150px;
         }
        
-        
+        .delete-btn{
+            background: black;
+            padding: 10px;
+        }
 </style>
 <body class="">
      <?php include_once"admin_nav.php"; ?>
@@ -87,7 +90,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                                 <form action="delete_review.php" method="POST">
                                     <input type="hidden" name="review_id" value="<?= $row['id'] ?>">
                                     <button type="submit"
-                                        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700">Delete</button>
+                                        class="delete-btn text-white px-3 py-1 rounded hover:bg-red-700">Delete</button>
                                 </form>
                             </td>
                         </tr>
