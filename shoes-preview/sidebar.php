@@ -47,7 +47,6 @@ function calculateTotalPrice($conn, $product_id, $quantity, $size) {
     return $base_price * $quantity;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,32 +58,53 @@ function calculateTotalPrice($conn, $product_id, $quantity, $size) {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
-            max-width: 800px;
-            margin: auto;
+            max-width: 600px;
             background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
         }
         h2 {
             color: #333;
         }
+        p {
+            color: #555;
+            font-size: 16px;
+        }
+        .btn-back{
+            background: black;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 20px;
+              }
     </style>
 </head>
 <body>
     <div class="container">
+        <img src="../image/logo4.png" alt="Shoevibes Logo" class="logo">
         <?php if ($orderPlaced): ?>
-            <h2>Thank you for choosing Shoevibes</h2>
+            <h2>Thank you for choosing Shoevibes!</h2>
             <p>Your order has been successfully placed. We appreciate your business!</p>
             <p>You will receive a confirmation email shortly with your order details.</p>
         <?php else: ?>
             <h2>Error</h2>
             <p>There was an error processing your order. Please try again.</p>
         <?php endif; ?>
+        <a href="../index.php"><button class="btn-back">Back</button></a>
     </div>
 </body>
 </html>

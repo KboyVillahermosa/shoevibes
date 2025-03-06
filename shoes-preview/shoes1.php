@@ -1114,6 +1114,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                 });
             });
         });
-</script>
+    </script>
 </body>
+
 </html>

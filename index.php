@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.1/dist/flowbite.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="./css/indexs.css">
+  <link rel="stylesheet" href="./css/indexx.css">
   <title>Document</title>
   <style>
     /* Fixed container for the canvas */
@@ -43,7 +43,7 @@ if (!isset($_SESSION['user_id'])) {
       align-items: center;
       margin-top: 70px;
       padding: 10px;
-      
+     
     }
 
     .header-content {
@@ -115,22 +115,7 @@ if (!isset($_SESSION['user_id'])) {
         width: 100%;
         max-width: 100px;
       }
-      .new-collection{
-        justify-content: center;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-       margin-top: 100px;
-       padding: 20px;
-      }
-      .new-collection-content{
-        width: 100%;
-        max-width: 300px;
-      }
-      .new-collection-content img{
-        width: 100%;
-        max-width: 400px;
-      }
+
   </style>
 </head>
 
@@ -159,21 +144,24 @@ if (!isset($_SESSION['user_id'])) {
             </li>
             <li>
               <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About</a>
+                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Men</a>
             </li>
             <li>
               <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Services</a>
+                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Women</a>
             </li>
             <li>
               <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Pricing</a>
+                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Kids</a>
+            </li>
+            <li>
+              <a href="#"
+                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About Us</a>
             </li>
             <li>
               <a href="#"
                 class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Contact</a>
             </li>
-
             <li>
               <a href="logout.php"
                 class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Logout</a>
@@ -185,11 +173,11 @@ if (!isset($_SESSION['user_id'])) {
   </section>
 
 
-  <section class="bg-section">
-    
+  <section class="">
+
     <div class="header">
       <div class="header-content">
-        
+
         <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-6xl">
           Custom Shoes Made Just for You</h1>
         <p class="my-4 text-lg text-gray-500"> At ShoeVibes, we believe that footwear is more than just a necessity it’s
@@ -200,6 +188,11 @@ if (!isset($_SESSION['user_id'])) {
       </div>
     </div>
   </section>
+
+  <!-------------- SHOP BY CATEGORIES  --------------------->
+   <section>
+     <?php include_once("categories.php"); ?>
+   </section>
 
   <section>
     <div class="products-title">
@@ -229,13 +222,12 @@ if (!isset($_SESSION['user_id'])) {
       </div>
     </div>
   </section>
-  
-  <!------------------------------------------------>
-   <div class="new-collection">
-    <div class="new-collection-content">
-        <img src="./image/newshoes.png" alt="">
-    </div>
-   </div>
+
+
+  <section>
+  <?php include_once "footer.php"; ?>
+
+  </section>
 
 
   <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.1/dist/flowbite.min.js"></script>

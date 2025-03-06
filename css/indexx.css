@@ -6,7 +6,7 @@
     flex-wrap: wrap;
     margin-top: 100px;
     padding: 10px;
-
+  
 }
 .header-content{
     width: 100%;
@@ -46,15 +46,23 @@
     border-radius: 10px;
 }
 
-/* styles.css */
-.bg-section {
-    background-image: url('../image/bg.svg'); /* Path to your image */
-    background-size: cover; /* Ensure it covers the section */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Prevent repeating */
-    min-height: 100vh; /* Full screen height */
-    display: flex;
-    align-items: center;
+.new-collection {
     justify-content: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 100px;
+    padding: 20px;
   }
-  
+
+  .new-collection-content {
+    width: 100%;
+    max-width: 1500px;
+   
+  }
+.carousel-wrapper {
+    height: 100vh;
+
+}
+ 
+ 
