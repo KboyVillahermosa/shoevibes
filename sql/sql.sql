@@ -68,3 +68,14 @@ CREATE TABLE reviews (
     image VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+-- Insert default admin user with password 'Admin123' (stored in plain text)
+INSERT INTO admin (username, password) VALUES 
+('admin123', 'Admin123');
