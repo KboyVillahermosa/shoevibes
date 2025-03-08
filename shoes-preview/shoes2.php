@@ -602,13 +602,22 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             <div class="flex flex-col md:flex-row gap-8 items-start">
                 <!-- Thumbnail images -->
                 <div class="thubnail flex flex-row md:flex-col gap-2">
-                    <img src="../image/s1.png" alt="Shoe 1"
+                    <img src="../image/class1.webp" alt="Shoe 1"
                         class="shoes1 w-18 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                    <img src="../image/s2.png" alt="Shoe 2"
+                    <img src="../image/class2.webp" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                    <img src="../image/s3.png" alt="Shoe 3"
+                    <img src="../image/class3.webp" alt="Shoe 2"
+                        class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
+                        onclick="changeImage(this)">
+                        <img src="../image/class4.webp" alt="Shoe 2"
+                        class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
+                        onclick="changeImage(this)">
+                        <img src="../image/class5.webp" alt="Shoe 2"
+                        class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
+                        onclick="changeImage(this)">
+                        <img src="../image/class7.webp" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
                 </div>

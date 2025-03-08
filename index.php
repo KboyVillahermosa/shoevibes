@@ -205,9 +205,11 @@ if (!isset($_SESSION['user_id'])) {
         <a href="./shoes-preview/shoes1.php">
           <img src="./image/nike1.png" alt=""></a>
       </div>
+      <a href="./shoes-preview/shoes2.php">
       <div class="products-content">
-        <img src="./image/nike1.png" alt="">
+        <img src="./image/class1.webp" alt="">
       </div>
+      </a>
       <div class="products-content">
         <img src="./image/nikev1.png" alt="">
       </div>
