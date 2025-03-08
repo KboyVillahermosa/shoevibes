@@ -9,6 +9,9 @@ $thank_you_message = "";
 $customization_error = "";
 $customization_success = "";
 
+// Get product ID from URL, default to 2 (for shoes2.php)
+$product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 3; //Sanitize input, ensure integer  **IMPORTANT: Set default to 2**
+
 if (isset($_POST['imageData']) && isset($_POST['customizationData'])) {
     $imageData = $_POST['imageData'];
     $customizationData = $_POST['customizationData'];
@@ -34,35 +37,72 @@ if (isset($_POST['imageData']) && isset($_POST['customizationData'])) {
         $customization_success .= "<img src='$imageFileName' alt='Customized Shoe' style='max-width:300px;'/><br>";
         // Construct the correct relative path to the JSON file
         $jsonPath = 'shoes-preview/' . $folderPath . basename($jsonFileName);
-        $customization_success .= "<a href='../view_customization.php?json=" . urlencode($jsonPath) . "' target='_blank'>View 3D Customization</a>";
+        $customization_success .= "<a href='../view_customization2.php?json=" . urlencode($jsonPath) . "' target='_blank'>View 3D Customization</a>";
 
-        // Store data in session:
-        $_SESSION['customized_image'] = $imageFileName; // image path
-        $_SESSION['customized_json'] = $jsonPath; // json path
-        $_SESSION['customization_success'] = $customization_success; // all messages
-
+        // Store data in session, using product-specific keys:
+        $_SESSION['customized_image_' . $product_id] = $imageFileName; // image path
+        $_SESSION['customized_json_' . $product_id] = $jsonPath; // json path
+        $_SESSION['customization_success_' . $product_id] = $customization_success; // all messages
+        $_SESSION['customization_data_' . $product_id] = $customizationData; // Store customization data
     } else {
         $customization_error = "Error saving the customization.";
     }
 }
 
-// Retrieve data from session (if available)
-if (isset($_SESSION['customization_success'])) {
-    $customization_success = $_SESSION['customization_success'];
+// Handle Delete Customization
+if (isset($_POST['delete_customization'])) {
+    $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 2; // Get product ID
 
+    // Get image and JSON file paths from session
+    $imageFileName = $_SESSION['customized_image_' . $product_id] ?? null;
+    $jsonPath = $_SESSION['customized_json_' . $product_id] ?? null;
+
+    // Delete image file
+    if ($imageFileName && file_exists($imageFileName)) {
+        if (unlink($imageFileName)) {
+            // Successfully deleted
+        } else {
+            error_log("Error deleting image file: " . $imageFileName);
+            // Display an error message to the user (optional)
+        }
+    }
+
+    // Extract the JSON filename from the path and delete the JSON file
+    if ($jsonPath) {
+        $jsonFileName = 'shoes-preview/' . $jsonPath;
+        if (file_exists($jsonFileName)) {
+            if (unlink($jsonFileName)) {
+                // Successfully deleted
+            } else {
+                error_log("Error deleting JSON file: " . $jsonFileName);
+                // Display an error message to the user (optional)
+            }
+        }
+    }
+
+    // Clear session variables
+    unset($_SESSION['customized_image_' . $product_id]);
+    unset($_SESSION['customized_json_' . $product_id]);
+    unset($_SESSION['customization_success_' . $product_id]);
+    unset($_SESSION['customization_data_' . $product_id]);
+
+    // Redirect to refresh the page
+    header('Location: shoes2.php?product_id=' . $product_id);
+    exit();
+}
+
+// Retrieve data from session (if available), using product-specific keys:
+if (isset($_SESSION['customization_success_' . $product_id])) {
+    $customization_success = $_SESSION['customization_success_' . $product_id];
 } else {
     $customization_success = "";
 }
-
-// Get product ID from URL, default to 1
-$product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 1; //Sanitize input, ensure integer
 
 // Handle add to cart functionality
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_cart'])) {
     $product_id = $_POST['product_id'];
     $quantity = $_POST['quantity'];
     $size = $_POST['size'];
-
 
     $sql = "SELECT product_name, price, image_url FROM products WHERE product_id = ?";
     $stmt = $conn->prepare($sql);
@@ -103,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_cart'])) {
         $cart_count = array_sum(array_column($_SESSION['cart'], 'quantity'));
 
         // Redirect back to the product page after adding to cart
-        header('Location: shoes1.php?product_id=' . $product_id . '&cart_count=' . $cart_count);
+        header('Location: shoes2.php?product_id=' . $product_id . '&cart_count=' . $cart_count);  //  **CHANGED: shoes1.php to shoes2.php**
         exit();
     } else {
         $order_message = "Error: Product not found.";
@@ -120,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_item'])) {
     // Recalculate total items in cart
     $cart_count = array_sum(array_column($_SESSION['cart'], 'quantity'));
 
-    header('Location: shoes1.php?product_id=' . $product_id . '&cart_count=' . $cart_count); // Redirect back to the product page
+    header('Location: shoes2.php?product_id=' . $product_id . '&cart_count=' . $cart_count); // **CHANGED: shoes1.php to shoes2.php**
     exit;
 }
 
@@ -143,26 +183,6 @@ if ($stmt) {
 } else {
     $order_message = "Database error: " . $conn->error;
     $productDetails = null;
-}
-
-// Check if customization data exists in localStorage
-$customization_data_json = ""; // Initialize the variable
-if (isset($_GET['customized']) && $_GET['customized'] == 'true') {
-    // Retrieve the customization data from localStorage using JavaScript and store it in a PHP variable
-    echo '<script>
-            window.onload = function() {
-                var customizationData = localStorage.getItem("shoeCustomization");
-                if (customizationData) {
-                    // Store the customization data in a hidden input field
-                    document.getElementById("customizationData").value = customizationData;
-                    // Display customization data for testing
-                    document.getElementById("customizationDisplay").innerHTML = "<p><b>Customization Data (JSON):</b></p><pre>" . customizationData + "</pre>";
-                } else {
-                    console.log("No customization data found in localStorage.");
-                    document.getElementById("customizationDisplay").innerHTML = "<p>No customization data available.</p>";
-                }
-            };
-          </script>';
 }
 
 // Handle form submission
@@ -205,7 +225,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['imageData']) && !isse
                 $sql_insert = "INSERT INTO orders (product_id, quantity, size, total_price, first_name, last_name, phone, email, street, barangay, city, province, postal_code, customization_data)
                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt_insert = $conn->prepare($sql_insert);
-
                 if ($stmt_insert) {
                     $stmt_insert->bind_param("iisdssssssssss", $product_id, $quantity, $size, $total_price, $firstName, $lastName, $phone, $email, $street, $barangay, $city, $province, $postalCode, $customization_data);
                     if ($stmt_insert->execute()) {
@@ -237,7 +256,7 @@ if (isset($_POST['saveCustomization'])) {
     $stmt->bind_param("si", $customization_data, $user_id);
 
     if ($stmt->execute()) {
-        $_SESSION['customization_data'] = $customization_data;
+        $_SESSION['customization_data_' . $product_id] = $customization_data; //**CHANGED: Product Specific Key**
         echo json_encode(['status' => 'success', 'message' => 'Customization saved successfully']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Failed to save customization']);
@@ -245,11 +264,7 @@ if (isset($_POST['saveCustomization'])) {
     exit;
 }
 
-
-
-
-
-//review code in 
+//review code in
 $reviewSubmitted = false;
 $submissionError = "";
 
@@ -297,7 +312,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Improved error handling during database interaction
             try {
-                $stmt = $conn->prepare("INSERT INTO reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt = $conn->prepare("INSERT INTO shoe2_reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
                 if ($stmt === false) {
                     throw new Exception("Prepare failed: " . $conn->error);
                 }
@@ -321,7 +336,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$sql = "SELECT * FROM reviews ORDER BY created_at DESC";
+$sql = "SELECT * FROM shoe2_reviews ORDER BY created_at DESC";
 $result = $conn->query($sql);
 
 // Calculate star rating statistics
@@ -340,7 +355,6 @@ while ($row = $result_stats->fetch_assoc()) {
 $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1) : 0;
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -523,7 +537,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                                 class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Shop</a>
                         </li>
                         <li>
-                            <a href="../add-to-cart/add_to_cart.php?show_cart=true&product_id=<?php echo $product_id; ?>"
+                            <a href="shoes1.php?show_cart=true&product_id=<?php echo $product_id; ?>"
                                 class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                                 Cart
                                 <span id="cart-count"
@@ -532,7 +546,6 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                                 </span>
                             </a>
                         </li>
-
                     </ul>
                 </div>
             </div>
@@ -555,7 +568,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                                 <p>Quantity: <?php echo htmlspecialchars($item['quantity']); ?></p>
                                 <p>Price: ₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
                             </div>
-                            <form method="post" action="shoes1.php?product_id=<?php echo $product_id; ?>&show_cart=true">
+                            <form method="post" action="shoes2.php?product_id=<?php echo $product_id; ?>&show_cart=true">
                                 <input type="hidden" name="index" value="<?php echo $index; ?>">
                                 <button type="submit" name="remove_item"
                                     class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
@@ -577,7 +590,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             <?php else: ?>
                 <p>Your cart is empty.</p>
             <?php endif; ?>
-            <a href="shoes1.php?product_id=<?php echo $product_id; ?>"
+            <a href="shoes2.php?product_id=<?php echo $product_id; ?>"
                 class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Continue Shopping</a>
         </div>
     <?php else: ?>
@@ -589,13 +602,22 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             <div class="flex flex-col md:flex-row gap-8 items-start">
                 <!-- Thumbnail images -->
                 <div class="thubnail flex flex-row md:flex-col gap-2">
-                    <img src="../image/s1.png" alt="Shoe 1"
+                    <img src="../image/class1.webp" alt="Shoe 1"
                         class="shoes1 w-18 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                    <img src="../image/s2.png" alt="Shoe 2"
+                    <img src="../image/class2.webp" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                    <img src="../image/s3.png" alt="Shoe 3"
+                    <img src="../image/class3.webp" alt="Shoe 2"
+                        class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
+                        onclick="changeImage(this)">
+                        <img src="../image/class4.webp" alt="Shoe 2"
+                        class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
+                        onclick="changeImage(this)">
+                        <img src="../image/class5.webp" alt="Shoe 2"
+                        class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
+                        onclick="changeImage(this)">
+                        <img src="../image/class7.webp" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
                 </div>
@@ -613,6 +635,11 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                     <?php
                     if (!empty($customization_success)) {
                         echo $customization_success;
+                        echo '<form method="post" action="shoes2.php?product_id=' . $product_id . '">
+                                  <button type="submit" name="delete_customization" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                      Delete Customization
+                                  </button>
+                              </form>';
                     }
                     if (!empty($customization_error)) {
                         echo "<p class='text-red-500'>" . htmlspecialchars($customization_error) . "</p>";
@@ -625,7 +652,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                     <div class="product-header-content">
                         <div class="flex-1 bg-white p-6 rounded-lg shadow-lg">
                             <?php if ($productDetails): ?>
-                                <a href="../boss.php">
+                                <a href="../boss2.php">
                                     <h2 class="text-xl font-semibold text-gray-800 mb-2 underline cursor-pointer">Customize
                                         shoes</h2>
                                 </a>
@@ -666,14 +693,12 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                                     <button class="quantity-button" onclick="updateQuantity(1)">+</button>
                                 </div>
 
-                                <form id="addToCartForm" method="post">
+                                <form method="post" action="shoes1.php?product_id=<?php echo $product_id; ?>">
                                     <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
                                     <input type="hidden" name="quantity" id="cartQuantity" value="1">
                                     <input type="hidden" name="size" id="cartSize" value="">
                                     <button type="submit" name="add_to_cart" class="add-to-cart-button">Add to Cart</button>
-
                                 </form>
-
 
 
                                 <!-- Buttons -->
@@ -690,8 +715,6 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                     </div>
                 </div>
             </div>
-
-
 
         </section>
 
@@ -1035,27 +1058,17 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                 return;
             }
 
-            // Use Fetch API for AJAX request
-            fetch('../add-to-cart/add-to-cart.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded', // Important for POST data
-                },
-                body: `../add-to-cart/add_to_cart=1&product_id=${productId}&quantity=${quantity}&size=${size}`  // Form data
-            })
-                .then(response => response.json()) // Parse JSON response
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert(data.message); // Show success message
-                        updateCartCount(data.cart_count); // Update cart count on page
-                    } else {
-                        alert(data.message); // Show error message
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while adding to cart.'); // Generic error message
-                });
+            // Instead of using fetch to call a separate PHP file, directly submit the form
+            // with the action set to shoes1.php and the name "add_to_cart" on the submit button.
+            // This is necessary because we combined add_to_cart.php into this single file.
+
+            // Update the hidden fields in the form to reflect current quantity and size
+            document.querySelector('input[name="quantity"]').value = quantity;
+            document.querySelector('input[name="size"]').value = size;
+
+            // Since the form is submitted directly, you don't need to handle the response in JavaScript
+            // The PHP code will handle adding the item to the cart and redirecting back to the page
+            // Add any additional client-side validation before form submission here
         }
 
         function updateCartCount(count) {
@@ -1063,7 +1076,6 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             cartCountSpan.innerText = count;
             cartCountSpan.classList.remove('hidden'); // Make the cart count visible
         }
-
 
         // Retrieve customization data from localStorage on page load
         window.onload = function () {
@@ -1081,7 +1093,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
         function saveCustomizationData() {
             var customizationData = document.getElementById("customizationData").value;
 
-            fetch('shoes1.php', {
+            fetch('shoes2.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -1128,6 +1140,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                 });
             });
         });
+
     </script>
 </body>
 
