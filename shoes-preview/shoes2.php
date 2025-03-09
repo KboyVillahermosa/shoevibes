@@ -505,6 +505,11 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             border-radius: 5px;
             background-color: #f9f9f9;
         }
+        .big-image{
+            height: 45vh;
+            width: 100%;
+            max-width: 500px;
+        }
     </style>
 </head>
 
@@ -602,22 +607,22 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             <div class="flex flex-col md:flex-row gap-8 items-start">
                 <!-- Thumbnail images -->
                 <div class="thubnail flex flex-row md:flex-col gap-2">
-                    <img src="../image/class1.webp" alt="Shoe 1"
+                    <img src="../image/1.png" alt="Shoe 1"
                         class="shoes1 w-18 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                    <img src="../image/class2.webp" alt="Shoe 2"
+                    <img src="../image/2.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                    <img src="../image/class3.webp" alt="Shoe 2"
+                    <img src="../image/3.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                        <img src="../image/class4.webp" alt="Shoe 2"
+                        <img src="../image/4.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                        <img src="../image/class5.webp" alt="Shoe 2"
+                        <img src="../image/5.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                        <img src="../image/class7.webp" alt="Shoe 2"
+                        <img src="../image/6.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
                 </div>
@@ -627,7 +632,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                     <?php if ($productDetails): ?>
                         <img id="mainImage" src="<?php echo htmlspecialchars($productDetails['image_url']); ?>"
                             alt="<?php echo htmlspecialchars($productDetails['product_name']); ?>"
-                            class="w-full h-auto rounded-lg shadow-lg">
+                            class="big-image w-full  rounded-lg shadow-lg">
                     <?php else: ?>
                         <p class="text-red-500">Product not found.</p>
                     <?php endif; ?>

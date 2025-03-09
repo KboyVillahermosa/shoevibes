@@ -493,7 +493,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
         }
     </style>
 </head>
-
+d
 <body class="bg-gray-100 font-sans">
     <section>
         <nav class="bg-white border-gray-200 shadow-sm">
@@ -597,6 +597,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                     <img src="../image/s3.png" alt="Shoe 3"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
+                        
                 </div>
 
                 <!-- Main product image -->
