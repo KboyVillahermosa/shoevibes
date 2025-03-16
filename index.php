@@ -43,7 +43,7 @@ if (!isset($_SESSION['user_id'])) {
       align-items: center;
       margin-top: 70px;
       padding: 10px;
-     
+
     }
 
     .header-content {
@@ -78,44 +78,77 @@ if (!isset($_SESSION['user_id'])) {
     .products-content {
       width: 100%;
       max-width: 400px;
+      padding: 20px;
+      box-shadow: 1px 1px 1px 1px gray;
     }
 
     .products-content img {
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
       border-radius: 10px;
       height: auto;
+    }
 
-      /* Media Queries */
-      @media (max-width: 768px) {
-        #model-container {
-          height: 50vh;
-        }
-
-        .header {
-          margin-top: 50px;
-        }
-
-        .header-content {
-          max-width: 100%;
-        }
-
-        .products-content {
-          max-width: 100%;
-        }
+    /* Media Queries */
+    @media (max-width: 768px) {
+      #model-container {
+        height: 50vh;
       }
 
-      @media (max-width: 480px) {
-        #model-container {
-          height: 40vh;
-        }
+      .header {
+        margin-top: 50px;
       }
 
-      .logos img {
-        width: 100%;
-        max-width: 100px;
+      .header-content {
+        max-width: 100%;
       }
 
+      .products-content {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #model-container {
+        height: 40vh;
+      }
+    }
+
+    .logos img {
+      width: 100%;
+      max-width: 100px;
+    }
+
+    .image-container {
+      position: relative;
+      width: 100%;
+      display: inline-block;
+    }
+
+    .image-container img {
+      width: 100%;
+      /* Adjust based on your needs */
+      display: block;
+    }
+
+    .hover-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .image-container:hover .hover-image {
+      opacity: 1;
+    }
+    .customize{
+      padding: 10px;
+      border-radius: 10px;
+      background-color: black;
+      color: white;
+      width: 100%;
+    }
   </style>
 </head>
 
@@ -156,7 +189,8 @@ if (!isset($_SESSION['user_id'])) {
             </li>
             <li>
               <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About Us</a>
+                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About
+                Us</a>
             </li>
             <li>
               <a href="#"
@@ -190,9 +224,9 @@ if (!isset($_SESSION['user_id'])) {
   </section>
 
   <!-------------- SHOP BY CATEGORIES  --------------------->
-   <section>
-     <?php include_once("categories.php"); ?>
-   </section>
+  <section>
+    <?php include_once("categories.php"); ?>
+  </section>
 
   <section>
     <div class="products-title">
@@ -203,31 +237,59 @@ if (!isset($_SESSION['user_id'])) {
     <div class="products-header">
       <div class="products-content">
         <a href="./shoes-preview/shoes1.php">
-          <img src="./image/32.png" alt=""></a>
+          <div class="image-container">
+            <img class="default-image" src="./image/32.png" alt="">
+            <img class="hover-image" src="./image/27.png" alt="">
+            <h1 class="mt-8">Customizable Lightweight Mesh Athletic</h1>
+            <p>₱5,900.00</p>
+            <button class="customize">Customize</button>
+          </div>
+        </a>
       </div>
-      <a href="./shoes-preview/shoes2.php">
+
       <div class="products-content">
-        <img src="./image/1.png" alt="">
+        <a href="./shoes-preview/shoes2.php">
+          <div class="image-container">
+            <img class="default-image" src="./image/1.png" alt="">
+            <img class="hover-image" src="./image/2.png" alt="">
+          </div>
+        </a>
       </div>
-      </a>
+
       <div class="products-content">
-        <img src="./image/7.png" alt="">
+        <div class="image-container">
+          <img class="default-image" src="./image/7.png" alt="">
+          <img class="hover-image" src="./image/8.png" alt="">
+        </div>
       </div>
+
       <div class="products-content">
-        <img src="./image/15.png" alt="">
+        <div class="image-container">
+          <img class="default-image" src="./image/15.png" alt="">
+          <img class="hover-image" src="./image/16.png" alt="">
+        </div>
       </div>
+
       <div class="products-content">
-        <img src="./image/20.png" alt="">
+        <div class="image-container">
+          <img class="default-image" src="./image/20.png" alt="">
+          <img class="hover-image" src="./image/21.png" alt="">
+        </div>
       </div>
+
       <div class="products-content">
-        <img src="./image/33.png" alt="">
+        <div class="image-container">
+          <img class="default-image" src="./image/33.png" alt="">
+          <img class="hover-image" src="./image/34.png" alt="">
+        </div>
       </div>
     </div>
+
   </section>
 
 
   <section>
-  <?php include_once "footer.php"; ?>
+    <?php include_once "footer.php"; ?>
 
   </section>
 
