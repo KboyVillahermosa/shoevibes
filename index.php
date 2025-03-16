@@ -203,24 +203,24 @@ if (!isset($_SESSION['user_id'])) {
     <div class="products-header">
       <div class="products-content">
         <a href="./shoes-preview/shoes1.php">
-          <img src="./image/nike1.png" alt=""></a>
+          <img src="./image/32.png" alt=""></a>
       </div>
       <a href="./shoes-preview/shoes2.php">
       <div class="products-content">
-        <img src="./image/class1.webp" alt="">
+        <img src="./image/1.png" alt="">
       </div>
       </a>
       <div class="products-content">
-        <img src="./image/nikev1.png" alt="">
+        <img src="./image/7.png" alt="">
       </div>
       <div class="products-content">
-        <img src="./image/s1.png" alt="">
+        <img src="./image/15.png" alt="">
       </div>
       <div class="products-content">
-        <img src="./image/s1.png" alt="">
+        <img src="./image/20.png" alt="">
       </div>
       <div class="products-content">
-        <img src="./image/s1.png" alt="">
+        <img src="./image/33.png" alt="">
       </div>
     </div>
   </section>

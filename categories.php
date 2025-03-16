@@ -29,12 +29,12 @@
 
 .categories-content{
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
 }
 
 .categories-content img{
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
 }
     </style>
          <section>

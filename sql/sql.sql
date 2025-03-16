@@ -30,11 +30,13 @@ CREATE TABLE IF NOT EXISTS products (
     image_url VARCHAR(255) NOT NULL
 );
 
--- Insert sample data into the products table
+-- Insert sample data into the products table*4////////***-
 INSERT INTO products (product_name, price, image_url) VALUES
 ('Nike Air Max', 5999.99, '../image/s1.png'),
-('Adidas Ultraboost', 6999.99, '../image/s2.png'),
-('Puma RS-X', 4999.99, '../image/s3.png');
+('Customizable Air-Force Zeros Low Top', 4000.00, '../image/s2.png'),
+('Customizable Premium Synthetic Leather Shoes', 3999.00, '../image/s3.png'),
+('Customizable High-Top Synthetic Leather Sneakers (White)', 4500.00, '../image/16.png');
+
 
 -- Create the orders table
 CREATE TABLE IF NOT EXISTS orders (

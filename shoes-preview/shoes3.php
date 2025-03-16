@@ -625,7 +625,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                         <img src="../image/12.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                        <img src="../image/13.png" alt="Shoe 2"
+                        <img src="../image/14.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
                        

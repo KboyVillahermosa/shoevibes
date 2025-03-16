@@ -506,9 +506,9 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             background-color: #f9f9f9;
         }
         .big-image{
-            height: 45vh;
+            height: 60vh;
             width: 100%;
-            max-width: 500px;
+            max-width: 800px;
         }
     </style>
 </head>
