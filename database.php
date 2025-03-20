@@ -1,8 +1,8 @@
 
 <?php
 $host = "localhost";
-$user = "root"; // Default XAMPP username
-$password = ""; // Default XAMPP password (leave blank)
+$user = "root"; 
+$password = ""; 
 $dbname = "shoevibe_db";
 
 // Create connection

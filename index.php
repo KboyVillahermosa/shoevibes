@@ -149,6 +149,12 @@ if (!isset($_SESSION['user_id'])) {
       color: white;
       width: 100%;
     }
+    .products-text{
+      font-size: clamp(0.9375rem, 0.1563rem + 2.5vw, 1.5625rem);
+    }
+    .products-para{
+      font-size: clamp(0.625rem, 0rem + 2vw, 1.125rem);
+    }
   </style>
 </head>
 
@@ -240,8 +246,8 @@ if (!isset($_SESSION['user_id'])) {
           <div class="image-container">
             <img class="default-image" src="./image/32.png" alt="">
             <img class="hover-image" src="./image/27.png" alt="">
-            <h1 class="mt-8">Customizable Lightweight Mesh Athletic</h1>
-            <p>₱5,900.00</p>
+            <h1 class="products-text mt-8">Customizable Lightweight Mesh Athletic</h1>
+            <p class="products-para mt-3 mb-3">₱5,900.00</p>
             <button class="customize">Customize</button>
           </div>
         </a>
@@ -252,6 +258,9 @@ if (!isset($_SESSION['user_id'])) {
           <div class="image-container">
             <img class="default-image" src="./image/1.png" alt="">
             <img class="hover-image" src="./image/2.png" alt="">
+            <h1 class="products-text mt-8">Customizable Air-Force Zeros Low Top</h1>
+            <p class="products-para mt-3 mb-3">₱4,500.00</p>
+            <button class="customize">Customize</button>
           </div>
         </a>
       </div>
@@ -260,6 +269,9 @@ if (!isset($_SESSION['user_id'])) {
         <div class="image-container">
           <img class="default-image" src="./image/7.png" alt="">
           <img class="hover-image" src="./image/8.png" alt="">
+          <h1 class="products-text mt-8">Customizable Premium Synthetic Leather Shoes</h1>
+            <p class="products-para mt-3 mb-3">₱4,200.00</p>
+            <button class="customize">Customize</button>
         </div>
       </div>
 
@@ -267,6 +279,9 @@ if (!isset($_SESSION['user_id'])) {
         <div class="image-container">
           <img class="default-image" src="./image/15.png" alt="">
           <img class="hover-image" src="./image/16.png" alt="">
+          <h1 class="products-text mt-8">Customizable High-Top Synthetic Leather Sneakers </h1>
+            <p class="products-para mt-3 mb-3">₱4,200.00</p>
+            <button class="customize">Customize</button>
         </div>
       </div>
 
@@ -274,6 +289,9 @@ if (!isset($_SESSION['user_id'])) {
         <div class="image-container">
           <img class="default-image" src="./image/20.png" alt="">
           <img class="hover-image" src="./image/21.png" alt="">
+          <h1 class="products-text mt-8">Customizable Lightweight Breathable Running Sneakers</h1>
+            <p class="products-para mt-3 mb-3">₱4,200.00</p>
+            <button class="customize">Customize</button>
         </div>
       </div>
 
@@ -281,6 +299,9 @@ if (!isset($_SESSION['user_id'])) {
         <div class="image-container">
           <img class="default-image" src="./image/33.png" alt="">
           <img class="hover-image" src="./image/34.png" alt="">
+          <h1 class="products-text mt-8">Customizable Eco Vegan Leather Boots</h1>
+            <p class="products-para mt-3 mb-3">₱6,100.00</p>
+            <button class="customize">Customize</button>
         </div>
       </div>
     </div>

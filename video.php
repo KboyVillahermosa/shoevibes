@@ -50,7 +50,7 @@
     <div class="video-header">
       <div class="video-content">
         <video width="600" autoplay loop muted>
-          <source src="./image/shoes2.mp4" type="video/mp4" />
+          <source src="../image/shoes.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
