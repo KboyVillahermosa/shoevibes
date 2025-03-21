@@ -292,7 +292,7 @@ if (!isset($_SESSION['user_id'])) {
   <section>
     <nav class="bg-white border-gray-200">
       <div class="logos max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="https://flowbite.com/" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <a href="" class="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="./image/logo4.png" class="h-24" alt="Flowbite Logo" />
         </a>
         <button data-collapse-toggle="navbar-default" type="button"
@@ -316,16 +316,18 @@ if (!isset($_SESSION['user_id'])) {
                 Search
               </button>
             </li>
-            <li><a href="#"
+            <li>
+              <a href="#"
                 class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About
                 Us</a></li>
-            <li><a href="#"
+            <li>
+              <a href="#"
                 class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Contact</a>
             </li>
-            <li><a href="logout.php"
-                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Logout</a>
+            <li>
+              <a href="profile.php"
+                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Profile</a>
             </li>
-
           </ul>
         </div>
 
