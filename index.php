@@ -307,25 +307,14 @@ if (!isset($_SESSION['user_id'])) {
         <div class="hidden w-full md:block md:w-auto" id="navbar-default">
           <ul
             class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
-
+            <li><a href="#"
+                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Home</a>
+            </li>
             <li>
               <button onclick="openSearchSidebar()"
                 class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                 Search
               </button>
-            </li>
-
-            <li><a href="#"
-                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Home</a>
-            </li>
-            <li><a href="#"
-                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Men</a>
-            </li>
-            <li><a href="#"
-                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Women</a>
-            </li>
-            <li><a href="#"
-                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Kids</a>
             </li>
             <li><a href="#"
                 class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About
