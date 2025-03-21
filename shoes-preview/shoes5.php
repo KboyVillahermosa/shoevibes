@@ -10,7 +10,7 @@ $customization_error = "";
 $customization_success = "";
 
 // Get product ID from URL, default to 2 (for shoes2.php)
-$product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 4; //Sanitize input, ensure integer  **IMPORTANT: Set default to 2**
+$product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 5; //Sanitize input, ensure integer  **IMPORTANT: Set default to 2**
 
 if (isset($_POST['imageData']) && isset($_POST['customizationData'])) {
     $imageData = $_POST['imageData'];
@@ -312,7 +312,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Improved error handling during database interaction
             try {
-                $stmt = $conn->prepare("INSERT INTO shoe2_reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt = $conn->prepare("INSERT INTO shoe5_reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
                 if ($stmt === false) {
                     throw new Exception("Prepare failed: " . $conn->error);
                 }
@@ -336,7 +336,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$sql = "SELECT * FROM shoe2_reviews ORDER BY created_at DESC";
+$sql = "SELECT * FROM shoe5_reviews ORDER BY created_at DESC";
 $result = $conn->query($sql);
 
 // Calculate star rating statistics
@@ -607,22 +607,24 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             <div class="flex flex-col md:flex-row gap-8 items-start">
                 <!-- Thumbnail images -->
                 <div class="thubnail flex flex-row md:flex-col gap-2">
-                    <img src="../image/15.png" alt="Shoe 1"
+                    <img src="../image/21.png" alt="Shoe 1"
                         class="shoes1 w-18 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                    <img src="../image/16.png" alt="Shoe 2"
+                    <img src="../image/22.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                    <img src="../image/17.png" alt="Shoe 2"
+                    <img src="../image/23.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                        <img src="../image/18.png" alt="Shoe 2"
+                        <img src="../image/24.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                        <img src="../image/19.png" alt="Shoe 2"
+                        <img src="../image/25.png" alt="Shoe 2"
                         class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
                         onclick="changeImage(this)">
-                      
+                        <img src="../image/26.png" alt="Shoe 2"
+                        class="w-16 h-16 cursor-pointer rounded-lg border-2 border-transparent hover:border-gray-600"
+                        onclick="changeImage(this)">
                 </div>
 
                 <!-- Main product image -->

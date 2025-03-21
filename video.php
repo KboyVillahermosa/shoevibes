@@ -6,11 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <title>Before/After Image Slider</title>
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+      
       .slider-text{
         justify-content: center;
         display: flex;
@@ -88,7 +84,7 @@
         display: flex;
         flex-direction: row;
         margin-top: 100px;
-        padding: 20px;
+        padding: 10px;
       }
 
       #video-header {
@@ -120,11 +116,11 @@
     
  
       .video-text h1 {
-        font-size: clamp(1.25rem, -1.0938rem + 7.5vw, 3.125rem);
+        font-size: clamp(2.5rem, 1.7188rem + 2.5vw, 3.125rem);
       }
 
       .video-text p {
-        font-size: clamp(0.625rem, 0rem + 2vw, 1.125rem);
+        font-size: clamp(0.9375rem, 0.7031rem + 0.75vw, 1.125rem);
         margin-top: 10px;
       }
     </style>
@@ -149,7 +145,7 @@
     <div class="video-header">
       <div class="video-content">
         <video width="600" autoplay loop muted>
-          <source src="image/shoevibes.mp4" type="video/mp4" />
+          <source src="image/shoevibes2.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
@@ -174,7 +170,7 @@
       </div>
       <div class="video-content">
         <video width="600" autoplay loop muted>
-          <source src="image/shoevibes2.mp4" type="video/mp4" />
+          <source src="image/shoevibes.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>

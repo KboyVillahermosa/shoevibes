@@ -579,6 +579,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             <a href="shoes1.php?product_id=<?php echo $product_id; ?>"
                 class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Continue Shopping</a>
         </div>
+        
     <?php else: ?>
 
 

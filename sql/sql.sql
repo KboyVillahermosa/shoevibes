@@ -35,7 +35,10 @@ INSERT INTO products (product_name, price, image_url) VALUES
 ('Nike Air Max', 5999.99, '../image/s1.png'),
 ('Customizable Air-Force Zeros Low Top', 4000.00, '../image/s2.png'),
 ('Customizable Premium Synthetic Leather Shoes', 3999.00, '../image/s3.png'),
-('Customizable High-Top Synthetic Leather Sneakers (White)', 4500.00, '../image/16.png');
+('Customizable High-Top Synthetic Leather Sneakers', 4500.00, '../image/16.png');
+('Customizable Lightweight Breathable Running Sneakers', 4200.00, '../image/16.png');
+('Customizable Eco Vegan Leather Boots', 500.00, '../image/16.png');
+
 
 
 -- Create the orders table
@@ -70,6 +73,62 @@ CREATE TABLE reviews (
     image VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE shoe2_reviews (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    email VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    rating INT(11) NOT NULL,
+    review_title VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    review TEXT COLLATE utf8mb4_general_ci NOT NULL,
+    image VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE shoe3_reviews (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    email VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    rating INT(11) NOT NULL,
+    review_title VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    review TEXT COLLATE utf8mb4_general_ci NOT NULL,
+    image VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE shoe4_reviews (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    email VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    rating INT(11) NOT NULL,
+    review_title VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    review TEXT COLLATE utf8mb4_general_ci NOT NULL,
+    image VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE shoe5_reviews (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    email VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    rating INT(11) NOT NULL,
+    review_title VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    review TEXT COLLATE utf8mb4_general_ci NOT NULL,
+    image VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE shoe6_reviews (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    email VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+    rating INT(11) NOT NULL,
+    review_title VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    review TEXT COLLATE utf8mb4_general_ci NOT NULL,
+    image VARCHAR(255) COLLATE utf8mb4_general_ci NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 
 
 CREATE TABLE admin (

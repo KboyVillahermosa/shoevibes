@@ -38,7 +38,6 @@ if (!isset($_SESSION['user_id'])) {
     .header {
       display: flex;
       flex-direction: row;
-      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
       margin-top: 70px;
@@ -46,15 +45,21 @@ if (!isset($_SESSION['user_id'])) {
 
     }
 
-    .header-content {
-      width: 100%;
-      max-width: 700px;
+    @media (max-width: 850px) {
+      .header {
+        flex-wrap: wrap;
+      }
     }
 
-    .header-image img {
+    .header-content {
       width: 100%;
-      height: auto;
-      border-radius: 80px;
+      max-width: 650px;
+      margin: 20px 20px;
+    }
+
+    .header-image video {
+      width: 100%;
+      border-radius: 10px;
       max-width: 600px;
     }
 
@@ -142,18 +147,143 @@ if (!isset($_SESSION['user_id'])) {
     .image-container:hover .hover-image {
       opacity: 1;
     }
-    .customize{
+
+    .customize {
       padding: 10px;
       border-radius: 10px;
       background-color: black;
       color: white;
       width: 100%;
     }
-    .products-text{
+
+    .products-text {
       font-size: clamp(0.9375rem, 0.1563rem + 2.5vw, 1.5625rem);
     }
-    .products-para{
+
+    .products-para {
       font-size: clamp(0.625rem, 0rem + 2vw, 1.125rem);
+    }
+    .search-sidebar {
+        position: fixed;
+        top: 0;
+        right: -600px; /* Hidden initially */
+        width: 600px;
+        height: 100%;
+        background: #fff;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+        transition: right 0.3s ease-in-out;
+        padding: 20px;
+        z-index: 1000;
+        overflow-y: auto;
+        border-left: 4px solid #000;
+    }
+
+    .search-sidebar.active {
+        right: 0;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 26px;
+        cursor: pointer;
+        border: none;
+        background: none;
+        font-weight: bold;
+    }
+
+    /* Overlay */
+    #searchOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    #searchOverlay.active {
+        display: block;
+    }
+
+    /* Search Input */
+    #searchInput {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: 0.3s;
+    }
+
+    #searchInput:focus {
+        border-color: #000;
+        outline: none;
+    }
+
+    /* Search Results */
+    #searchResults {
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .search-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        transition: background 0.3s;
+        border-radius: 8px;
+    }
+
+    .search-item:hover {
+        background: #f9f9f9;
+    }
+
+    .search-item img {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .search-item p {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .search-item .price {
+        color: #ff4d00;
+        font-weight: bold;
+    }
+
+    .search-item a {
+        color: #000;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .search-item a:hover {
+        color: #ff4d00;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .search-sidebar {
+            width: 100%;
+            right: -100%;
+        }
+
+        .search-sidebar.active {
+            right: 0;
+        }
     }
   </style>
 </head>
@@ -177,41 +307,53 @@ if (!isset($_SESSION['user_id'])) {
         <div class="hidden w-full md:block md:w-auto" id="navbar-default">
           <ul
             class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
+
             <li>
-              <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Home</a>
+              <button onclick="openSearchSidebar()"
+                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+                Search
+              </button>
             </li>
-            <li>
-              <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Men</a>
+
+            <li><a href="#"
+                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Home</a>
             </li>
-            <li>
-              <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Women</a>
+            <li><a href="#"
+                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Men</a>
             </li>
-            <li>
-              <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Kids</a>
+            <li><a href="#"
+                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Women</a>
             </li>
-            <li>
-              <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About
-                Us</a>
+            <li><a href="#"
+                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Kids</a>
             </li>
-            <li>
-              <a href="#"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Contact</a>
+            <li><a href="#"
+                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About
+                Us</a></li>
+            <li><a href="#"
+                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Contact</a>
             </li>
-            <li>
-              <a href="logout.php"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Logout</a>
+            <li><a href="logout.php"
+                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Logout</a>
             </li>
+
           </ul>
         </div>
+
       </div>
     </nav>
   </section>
-
+  <section>
+  <div id="searchSidebar" class="search-sidebar">
+    <div class="search-sidebar-content">
+        <span class="close-btn" onclick="closeSearchSidebar()">&times;</span>
+        <h2>Search Products</h2>
+        <input type="text" id="searchInput" placeholder="Search for products..." onkeyup="filterProducts()">
+        <div id="searchResults"></div>
+    </div>
+</div>
+<div id="searchOverlay" onclick="closeSearchSidebar()"></div>
+  </section>
 
   <section class="">
 
@@ -224,14 +366,17 @@ if (!isset($_SESSION['user_id'])) {
           a statement, an extension of your personality, and a way to stand out. </p>
       </div>
       <div class="header-image">
-        <div id="model-container"></div>
+        <video width="600" autoplay loop muted>
+          <source src="image/header.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
     </div>
   </section>
 
   <!-------------- SHOP BY CATEGORIES  --------------------->
   <section>
-    <?php include_once("categories.php"); ?>
+    <?php include_once("video.php"); ?>
   </section>
 
   <section>
@@ -242,15 +387,13 @@ if (!isset($_SESSION['user_id'])) {
 
     <div class="products-header">
       <div class="products-content">
-        <a href="./shoes-preview/shoes1.php">
-          <div class="image-container">
-            <img class="default-image" src="./image/32.png" alt="">
-            <img class="hover-image" src="./image/27.png" alt="">
-            <h1 class="products-text mt-8">Customizable Lightweight Mesh Athletic</h1>
-            <p class="products-para mt-3 mb-3">₱5,900.00</p>
-            <button class="customize">Customize</button>
-          </div>
-        </a>
+        <div class="image-container">
+          <img class="default-image" src="./image/32.png" alt="">
+          <img class="hover-image" src="./image/27.png" alt="">
+          <h1 class="products-text mt-8">Customizable Lightweight Mesh Athletic</h1>
+          <p class="products-para mt-3 mb-3">₱5,900.00</p>
+          <a href="./shoes-preview/shoes1.php"> <button class="customize">Customize</button> </a>
+        </div>
       </div>
 
       <div class="products-content">
@@ -260,7 +403,7 @@ if (!isset($_SESSION['user_id'])) {
             <img class="hover-image" src="./image/2.png" alt="">
             <h1 class="products-text mt-8">Customizable Air-Force Zeros Low Top</h1>
             <p class="products-para mt-3 mb-3">₱4,500.00</p>
-            <button class="customize">Customize</button>
+            <a href="./shoes-preview/shoes2.php"> <button class="customize">Customize</button> </a>
           </div>
         </a>
       </div>
@@ -270,8 +413,8 @@ if (!isset($_SESSION['user_id'])) {
           <img class="default-image" src="./image/7.png" alt="">
           <img class="hover-image" src="./image/8.png" alt="">
           <h1 class="products-text mt-8">Customizable Premium Synthetic Leather Shoes</h1>
-            <p class="products-para mt-3 mb-3">₱4,200.00</p>
-            <button class="customize">Customize</button>
+          <p class="products-para mt-3 mb-3">₱4,200.00</p>
+          <a href="./shoes-preview/shoes3.php"> <button class="customize">Customize</button> </a>
         </div>
       </div>
 
@@ -280,8 +423,8 @@ if (!isset($_SESSION['user_id'])) {
           <img class="default-image" src="./image/15.png" alt="">
           <img class="hover-image" src="./image/16.png" alt="">
           <h1 class="products-text mt-8">Customizable High-Top Synthetic Leather Sneakers </h1>
-            <p class="products-para mt-3 mb-3">₱4,200.00</p>
-            <button class="customize">Customize</button>
+          <p class="products-para mt-3 mb-3">₱4,200.00</p>
+          <a href="./shoes-preview/shoes4.php"> <button class="customize">Customize</button> </a>
         </div>
       </div>
 
@@ -290,8 +433,8 @@ if (!isset($_SESSION['user_id'])) {
           <img class="default-image" src="./image/20.png" alt="">
           <img class="hover-image" src="./image/21.png" alt="">
           <h1 class="products-text mt-8">Customizable Lightweight Breathable Running Sneakers</h1>
-            <p class="products-para mt-3 mb-3">₱4,200.00</p>
-            <button class="customize">Customize</button>
+          <p class="products-para mt-3 mb-3">₱4,200.00</p>
+          <a href="./shoes-preview/shoes5.php"> <button class="customize">Customize</button> </a>
         </div>
       </div>
 
@@ -300,8 +443,8 @@ if (!isset($_SESSION['user_id'])) {
           <img class="default-image" src="./image/33.png" alt="">
           <img class="hover-image" src="./image/34.png" alt="">
           <h1 class="products-text mt-8">Customizable Eco Vegan Leather Boots</h1>
-            <p class="products-para mt-3 mb-3">₱6,100.00</p>
-            <button class="customize">Customize</button>
+          <p class="products-para mt-3 mb-3">₱6,100.00</p>
+          <a href="./shoes-preview/shoes6.php"> <button class="customize">Customize</button> </a>
         </div>
       </div>
     </div>
@@ -391,7 +534,48 @@ if (!isset($_SESSION['user_id'])) {
     window.addEventListener('resize', resizeCanvas);
 
     // Call resizeCanvas once at the beginning
-    resizeCanvas();
+    function openSearchSidebar() {
+        document.getElementById("searchSidebar").classList.add("active");
+        document.getElementById("searchOverlay").classList.add("active");
+    }
+
+    function closeSearchSidebar() {
+        document.getElementById("searchSidebar").classList.remove("active");
+        document.getElementById("searchOverlay").classList.remove("active");
+    }
+
+    function filterProducts() {
+        let query = document.getElementById("searchInput").value.toLowerCase();
+        let products = document.querySelectorAll(".products-content");
+        let resultsContainer = document.getElementById("searchResults");
+        
+        resultsContainer.innerHTML = ""; // Clear previous results
+
+        products.forEach(product => {
+            let productName = product.querySelector(".products-text").textContent.toLowerCase();
+            if (productName.includes(query)) {
+                let imgSrc = product.querySelector(".default-image").src;
+                let price = product.querySelector(".products-para").textContent;
+                let link = product.querySelector("a").href;
+
+                resultsContainer.innerHTML += `
+                    <div class="search-item">
+                        <img src="${imgSrc}" alt="${productName}">
+                        <div>
+                            <p><strong>${productName}</strong></p>
+                            <p class="price">${price}</p>
+                            <a href="${link}">View Product</a>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        // If no products match
+        if (resultsContainer.innerHTML === "") {
+            resultsContainer.innerHTML = "<p>No products found</p>";
+        }
+    }
   </script>
 
 </body>

@@ -312,7 +312,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Improved error handling during database interaction
             try {
-                $stmt = $conn->prepare("INSERT INTO shoe2_reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt = $conn->prepare("INSERT INTO shoe4_reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
                 if ($stmt === false) {
                     throw new Exception("Prepare failed: " . $conn->error);
                 }
@@ -336,7 +336,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$sql = "SELECT * FROM shoe2_reviews ORDER BY created_at DESC";
+$sql = "SELECT * FROM shoe4_reviews ORDER BY created_at DESC";
 $result = $conn->query($sql);
 
 // Calculate star rating statistics
