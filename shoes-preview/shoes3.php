@@ -512,7 +512,13 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
         }
         .imagez{
             width: 100%;
+        }customize-now{
+            background-color: black;
+            color: white;
+            border-radius: 10px;
+            
         }
+        .
     </style>
 </head>
 
@@ -662,8 +668,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                         <div class="flex-1 bg-white p-6 rounded-lg shadow-lg">
                             <?php if ($productDetails): ?>
                                 <a href="../boss2.php">
-                                    <h2 class="text-xl font-semibold text-gray-800 mb-2 underline cursor-pointer">Customize
-                                        shoes</h2>
+                                    <button class="customize-now mb-3 mt-4">Customize</button>
                                 </a>
                                 <h2 class="text-xl font-semibold text-gray-800 mb-2">
                                     <?php echo htmlspecialchars($productDetails['product_name']); ?>
