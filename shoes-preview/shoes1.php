@@ -491,6 +491,14 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             border-radius: 5px;
             background-color: #f9f9f9;
         }
+
+        .customize-now {
+            background-color: black;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -579,7 +587,7 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             <a href="shoes1.php?product_id=<?php echo $product_id; ?>"
                 class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Continue Shopping</a>
         </div>
-        
+
     <?php else: ?>
 
 
@@ -632,16 +640,19 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
                     <div class="product-header-content">
                         <div class="flex-1 bg-white p-6 rounded-lg shadow-lg">
                             <?php if ($productDetails): ?>
-                                <a href="../boss.php">
-                                    <h2 class="text-xl font-semibold text-gray-800 mb-2 underline cursor-pointer">Customize
-                                        shoes</h2>
-                                </a>
                                 <h2 class="text-xl font-semibold text-gray-800 mb-2">
                                     <?php echo htmlspecialchars($productDetails['product_name']); ?>
                                 </h2>
+                                <a href="../boss.php">
+                                    <button class="customize-now mt-3 mb-3">Customize Now</button>
+                                </a>
                                 <div class="flex items-center mb-4">
-                                    <span class="text-yellow-500 text-lg">★★★★★</span>
-                                    <span class="text-gray-600 ml-2">2 reviews</span>
+                                    <!-- Display Average Rating -->
+                                    <div class="mb-4">
+                                        <h3 class="text-xl font-semibold text-gray-700">Average Rating: <?= $average_rating ?> /
+                                            5
+                                            (<?= $total_reviews ?> reviews)</h3>
+                                    </div>
                                 </div>
 
                                 <div class="text-lg font-bold text-gray-800 mb-4">
