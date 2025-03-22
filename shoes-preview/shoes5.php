@@ -510,6 +510,12 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
             width: 100%;
             max-width: 600px;
         }
+        .customize-now {
+            background-color: black;
+            color: white;
+            border-radius: 10px;
+
+        }
     </style>
 </head>
 

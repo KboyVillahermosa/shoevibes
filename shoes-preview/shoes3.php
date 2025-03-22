@@ -512,13 +512,14 @@ $average_rating = ($total_reviews > 0) ? round($total_rating / $total_reviews, 1
         }
         .imagez{
             width: 100%;
-        }customize-now{
+        }
+        .customize-now {
             background-color: black;
             color: white;
             border-radius: 10px;
-            
+
         }
-        .
+        
     </style>
 </head>
 
