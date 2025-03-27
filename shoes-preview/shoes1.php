@@ -267,7 +267,7 @@ if (!isset($_SESSION['form_token'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate the token
     if (!isset($_POST['form_token']) || $_POST['form_token'] !== $_SESSION['form_token']) {
-        $submissionError = "Invalid submission. Please try again."; // Changed error message for clarity
+        $submissionError = "Invalid submission. Please try again.";
     } else {
         // Token is valid, process the form
         if (
@@ -278,9 +278,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ) {
             $name = $_POST['name'];
             $email = $_POST['email'];
-            $rating = (int) $_POST['rating']; // Ensure rating is an integer
-            $review_title = isset($_POST['review_title']) ? $_POST['review_title'] : ''; // Optional field
+            $rating = (int) $_POST['rating'];
+            $review_title = isset($_POST['review_title']) ? $_POST['review_title'] : '';
             $review = $_POST['review'];
+            // Add product_id from the current page
+            $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 1;
 
             $imagePath = NULL;
             if (!empty($_FILES['image']['name'])) {
@@ -295,19 +297,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
 
-            // Improved error handling during database interaction
             try {
-                $stmt = $conn->prepare("INSERT INTO reviews (name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?)");
+                // Modified SQL query to include product_id
+                $stmt = $conn->prepare("INSERT INTO reviews (product_id, name, email, rating, review_title, review, image) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 if ($stmt === false) {
                     throw new Exception("Prepare failed: " . $conn->error);
                 }
-                $stmt->bind_param("ssisss", $name, $email, $rating, $review_title, $review, $imagePath);
+                $stmt->bind_param("ississs", $product_id, $name, $email, $rating, $review_title, $review, $imagePath);
                 if ($stmt->execute()) {
                     $reviewSubmitted = true;
-
-                    // Invalidate the token after successful submission
                     unset($_SESSION['form_token']);
-                    $_SESSION['form_token'] = generate_token(); // Generate a new token for the next submission
+                    $_SESSION['form_token'] = generate_token();
                 } else {
                     throw new Exception("Execute failed: " . $stmt->error);
                 }
