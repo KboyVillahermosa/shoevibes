@@ -163,127 +163,129 @@ if (!isset($_SESSION['user_id'])) {
     .products-para {
       font-size: clamp(0.625rem, 0rem + 2vw, 1.125rem);
     }
+
     .search-sidebar {
-        position: fixed;
-        top: 0;
-        right: -600px; /* Hidden initially */
-        width: 600px;
-        height: 100%;
-        background: #fff;
-        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
-        transition: right 0.3s ease-in-out;
-        padding: 20px;
-        z-index: 1000;
-        overflow-y: auto;
-        border-left: 4px solid #000;
+      position: fixed;
+      top: 0;
+      right: -600px;
+      /* Hidden initially */
+      width: 600px;
+      height: 100%;
+      background: #fff;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+      transition: right 0.3s ease-in-out;
+      padding: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+      border-left: 4px solid #000;
     }
 
     .search-sidebar.active {
-        right: 0;
+      right: 0;
     }
 
     .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 26px;
-        cursor: pointer;
-        border: none;
-        background: none;
-        font-weight: bold;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 26px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-weight: bold;
     }
 
     /* Overlay */
     #searchOverlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
     }
 
     #searchOverlay.active {
-        display: block;
+      display: block;
     }
 
     /* Search Input */
     #searchInput {
-        width: 100%;
-        padding: 12px;
-        margin-top: 10px;
-        border: 2px solid #ccc;
-        border-radius: 8px;
-        font-size: 16px;
-        transition: 0.3s;
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: 0.3s;
     }
 
     #searchInput:focus {
-        border-color: #000;
-        outline: none;
+      border-color: #000;
+      outline: none;
     }
 
     /* Search Results */
     #searchResults {
-        margin-top: 20px;
-        text-align: left;
+      margin-top: 20px;
+      text-align: left;
     }
 
     .search-item {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 15px;
-        border-bottom: 1px solid #ddd;
-        transition: background 0.3s;
-        border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      transition: background 0.3s;
+      border-radius: 8px;
     }
 
     .search-item:hover {
-        background: #f9f9f9;
+      background: #f9f9f9;
     }
 
     .search-item img {
-        width: 80px;
-        height: 80px;
-        border-radius: 8px;
-        object-fit: cover;
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
     }
 
     .search-item p {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 500;
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
     }
 
     .search-item .price {
-        color: #ff4d00;
-        font-weight: bold;
+      color: #ff4d00;
+      font-weight: bold;
     }
 
     .search-item a {
-        color: #000;
-        text-decoration: none;
-        font-weight: bold;
-        transition: 0.3s;
+      color: #000;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
     }
 
     .search-item a:hover {
-        color: #ff4d00;
+      color: #ff4d00;
     }
 
     /* Responsive Styles */
     @media (max-width: 768px) {
-        .search-sidebar {
-            width: 100%;
-            right: -100%;
-        }
+      .search-sidebar {
+        width: 100%;
+        right: -100%;
+      }
 
-        .search-sidebar.active {
-            right: 0;
-        }
+      .search-sidebar.active {
+        right: 0;
+      }
     }
   </style>
 </head>
@@ -304,46 +306,42 @@ if (!isset($_SESSION['user_id'])) {
               d="M1 1h15M1 7h15M1 13h15" />
           </svg>
         </button>
+        <!-- Replace the existing navbar section with this updated version -->
         <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-          <ul
-            class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
-            <li><a href="#"
-                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Home</a>
-            </li>
-            <li>
-              <button onclick="openSearchSidebar()"
-                class="block py-2 px-3 text-black rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+    <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
+        <li>
+            <a href="#" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">Home</a>
+        </li>
+        <li>
+            <button onclick="openSearchSidebar()" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">
                 Search
-              </button>
-            </li>
-            <li>
-              <a href="#"
-                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">About
-                Us</a></li>
-            <li>
-              <a href="#"
-                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Contact</a>
-            </li>
-            <li>
-              <a href="profile.php"
-                class="block py-2 px-3 text-black hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Profile</a>
-            </li>
-          </ul>
-        </div>
+            </button>
+        </li>
+        <li>
+            <a href="#" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">About Us</a>
+        </li>
+        <li>
+            <a href="contact.php" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">Contact</a>
+        </li>
+        <li>
+            <a href="profile.php" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">Profile</a>
+        </li>
+    </ul>
+</div>
 
       </div>
     </nav>
   </section>
   <section>
-  <div id="searchSidebar" class="search-sidebar">
-    <div class="search-sidebar-content">
+    <div id="searchSidebar" class="search-sidebar">
+      <div class="search-sidebar-content">
         <span class="close-btn" onclick="closeSearchSidebar()">&times;</span>
         <h2>Search Products</h2>
         <input type="text" id="searchInput" placeholder="Search for products..." onkeyup="filterProducts()">
         <div id="searchResults"></div>
+      </div>
     </div>
-</div>
-<div id="searchOverlay" onclick="closeSearchSidebar()"></div>
+    <div id="searchOverlay" onclick="closeSearchSidebar()"></div>
   </section>
 
   <section class="">
@@ -526,30 +524,30 @@ if (!isset($_SESSION['user_id'])) {
 
     // Call resizeCanvas once at the beginning
     function openSearchSidebar() {
-        document.getElementById("searchSidebar").classList.add("active");
-        document.getElementById("searchOverlay").classList.add("active");
+      document.getElementById("searchSidebar").classList.add("active");
+      document.getElementById("searchOverlay").classList.add("active");
     }
 
     function closeSearchSidebar() {
-        document.getElementById("searchSidebar").classList.remove("active");
-        document.getElementById("searchOverlay").classList.remove("active");
+      document.getElementById("searchSidebar").classList.remove("active");
+      document.getElementById("searchOverlay").classList.remove("active");
     }
 
     function filterProducts() {
-        let query = document.getElementById("searchInput").value.toLowerCase();
-        let products = document.querySelectorAll(".products-content");
-        let resultsContainer = document.getElementById("searchResults");
-        
-        resultsContainer.innerHTML = ""; // Clear previous results
+      let query = document.getElementById("searchInput").value.toLowerCase();
+      let products = document.querySelectorAll(".products-content");
+      let resultsContainer = document.getElementById("searchResults");
 
-        products.forEach(product => {
-            let productName = product.querySelector(".products-text").textContent.toLowerCase();
-            if (productName.includes(query)) {
-                let imgSrc = product.querySelector(".default-image").src;
-                let price = product.querySelector(".products-para").textContent;
-                let link = product.querySelector("a").href;
+      resultsContainer.innerHTML = ""; // Clear previous results
 
-                resultsContainer.innerHTML += `
+      products.forEach(product => {
+        let productName = product.querySelector(".products-text").textContent.toLowerCase();
+        if (productName.includes(query)) {
+          let imgSrc = product.querySelector(".default-image").src;
+          let price = product.querySelector(".products-para").textContent;
+          let link = product.querySelector("a").href;
+
+          resultsContainer.innerHTML += `
                     <div class="search-item">
                         <img src="${imgSrc}" alt="${productName}">
                         <div>
@@ -559,13 +557,13 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                     </div>
                 `;
-            }
-        });
-
-        // If no products match
-        if (resultsContainer.innerHTML === "") {
-            resultsContainer.innerHTML = "<p>No products found</p>";
         }
+      });
+
+      // If no products match
+      if (resultsContainer.innerHTML === "") {
+        resultsContainer.innerHTML = "<p>No products found</p>";
+      }
     }
   </script>
 

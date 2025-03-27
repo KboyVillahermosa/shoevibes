@@ -336,7 +336,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$sql = "SELECT * FROM shoe4_reviews ORDER BY created_at DESC";
+$sql = "SELECT * FROM reviews4 ORDER BY created_at DESC";
 $result = $conn->query($sql);
 
 // Calculate star rating statistics
