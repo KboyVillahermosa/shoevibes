@@ -16,18 +16,13 @@ if (!isset($_SESSION['user_id'])) {
   <link rel="stylesheet" href="./css/indexx.css">
   <title>Document</title>
   <style>
-    /* Fixed container for the canvas */
     #model-container {
       width: 600PX;
-      /* Use full width of the parent */
       height: 60vh;
-      /* Adjust the height as a percentage of the viewport height */
       position: relative;
       min-height: 300px;
-      /* prevent the container from collapsing too much */
     }
 
-    /* Ensure canvas fills the container */
     canvas {
       width: 100%;
       height: 100%;
@@ -310,25 +305,42 @@ if (!isset($_SESSION['user_id'])) {
         <div class="hidden w-full md:block md:w-auto" id="navbar-default">
     <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
         <li>
-            <a href="#" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">Home</a>
+            <a href="#" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 relative group md:p-0 transition-colors duration-300">
+                <span class="relative">Home
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-black transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                </span>
+            </a>
         </li>
         <li>
-            <button onclick="openSearchSidebar()" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">
-                Search
+            <button onclick="openSearchSidebar()" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 relative group md:p-0 transition-colors duration-300">
+                <span class="relative">Search
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-black transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                </span>
             </button>
         </li>
         <li>
-            <a href="#" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">About Us</a>
+            <a href="about-us.php" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 relative group md:p-0 transition-colors duration-300">
+                <span class="relative">About Us
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-black transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                </span>
+            </a>
         </li>
         <li>
-            <a href="contact.php" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">Contact</a>
+            <a href="contact.php" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 relative group md:p-0 transition-colors duration-300">
+                <span class="relative">Contact
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-black transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                </span>
+            </a>
         </li>
         <li>
-            <a href="profile.php" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-500 md:p-0 transition-colors duration-300">Profile</a>
+            <a href="profile.php" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 relative group md:p-0 transition-colors duration-300">
+                <span class="relative">Profile
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-black transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                </span>
+            </a>
         </li>
     </ul>
 </div>
-
       </div>
     </nav>
   </section>
