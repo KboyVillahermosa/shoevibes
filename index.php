@@ -286,6 +286,21 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 
 <body>
+  <!-- Add the background pattern container -->
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <svg class="absolute top-0 left-[max(50%,25rem)] h-[64rem] w-[128rem] -translate-x-1/2 stroke-gray-200 [mask-image:radial-gradient(64rem_64rem_at_top,white,transparent)]" aria-hidden="true">
+      <defs>
+        <pattern id="e813992c-7d03-4cc4-a2bd-151760b470a0" width="200" height="200" x="50%" y="-1" patternUnits="userSpaceOnUse">
+          <path d="M100 200V.5M.5 .5H200" fill="none" />
+        </pattern>
+      </defs>
+      <svg x="50%" y="-1" class="overflow-visible fill-gray-50">
+        <path d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z" stroke-width="0" />
+      </svg>
+      <rect width="100%" height="100%" stroke-width="0" fill="url(#e813992c-7d03-4cc4-a2bd-151760b470a0)" />
+    </svg>
+  </div>
+  
   <section>
     <nav class="bg-white border-gray-200">
       <div class="logos max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -320,7 +335,7 @@ if (!isset($_SESSION['user_id'])) {
         </li>
         <li>
             <a href="about-us.php" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 relative group md:p-0 transition-colors duration-300">
-                <span class="relative">About Us
+                <span class="relative">AboutUs
                     <span class="absolute bottom-0 left-0 w-full h-0.5 bg-black transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
                 </span>
             </a>

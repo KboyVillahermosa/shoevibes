@@ -70,12 +70,6 @@ include 'database.php';
         </div>
 
         <!-- Team Section -->
-        <div class="text-center">
-            <h2 class="text-3xl font-bold text-gray-900 mb-8">Meet Our Team</h2>
-            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
-                Our passionate team of designers, craftspeople, and customer service experts work together to bring your shoe visions to life.
-            </p>
-        </div>
     </div>
 
     <!-- Footer -->
