@@ -342,7 +342,7 @@ if (!isset($_SESSION['user_id'])) {
         </li>
         <li>
             <a href="contact.php" class="block py-2 px-3 text-gray-800 hover:bg-gray-100 md:hover:bg-transparent md:border-0 relative group md:p-0 transition-colors duration-300">
-                <span class="relative">Contacts
+                <span class="relative">Contact Us
                     <span class="absolute bottom-0 left-0 w-full h-0.5 bg-black transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
                 </span>
             </a>
