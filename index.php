@@ -16,6 +16,7 @@ if (!isset($_SESSION['user_id'])) {
   <link rel="stylesheet" href="./css/indexx.css">
   <title>Document</title>
   <style>
+
     #model-container {
       width: 600PX;
       height: 60vh;
@@ -282,24 +283,37 @@ if (!isset($_SESSION['user_id'])) {
         right: 0;
       }
     }
+    .background-pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  opacity: 0.15;
+  background-color: #ffffff;
+  background-image: linear-gradient(#000000 1px, transparent 1px),
+                   linear-gradient(to right,rgb(131, 131, 131) 1px, transparent 1px);
+  background-size: 200px 300px; /* Increased from 50px to 100px */
+  pointer-events: none;
+}
+
+.products-content {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 1px 1px 1px 1px gray;
+  background-color: white; /* Added to ensure card background stays visible */
+  border-radius: 8px; /* Optional: adds rounded corners to cards */
+}
+
+    
   </style>
 </head>
 
 <body>
   <!-- Add the background pattern container -->
-  <div class="absolute inset-0 -z-10 overflow-hidden">
-    <svg class="absolute top-0 left-[max(50%,25rem)] h-[64rem] w-[128rem] -translate-x-1/2 stroke-gray-200 [mask-image:radial-gradient(64rem_64rem_at_top,white,transparent)]" aria-hidden="true">
-      <defs>
-        <pattern id="e813992c-7d03-4cc4-a2bd-151760b470a0" width="200" height="200" x="50%" y="-1" patternUnits="userSpaceOnUse">
-          <path d="M100 200V.5M.5 .5H200" fill="none" />
-        </pattern>
-      </defs>
-      <svg x="50%" y="-1" class="overflow-visible fill-gray-50">
-        <path d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z" stroke-width="0" />
-      </svg>
-      <rect width="100%" height="100%" stroke-width="0" fill="url(#e813992c-7d03-4cc4-a2bd-151760b470a0)" />
-    </svg>
-  </div>
+  <div class="background-pattern"></div>
   
   <section>
     <nav class="bg-white border-gray-200">
