@@ -17,17 +17,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $province = $conn->real_escape_string($_POST['province']);
     $postalCode = $conn->real_escape_string($_POST['postalCode']);
 
+    // Handle design image
+    $customization_image = '';
+    if (isset($_POST['screenshot'])) {
+        $image_data = $_POST['screenshot'];
+        $image_data = str_replace('data:image/png;base64,', '', $image_data);
+        $image_data = str_replace(' ', '+', $image_data);
+        $decoded_image = base64_decode($image_data);
+
+        // Generate unique filename
+        $filename = 'custom_shoe_' . time() . '.png';
+        $filepath = "customizations/" . $filename;
+
+        if (file_put_contents($filepath, $decoded_image)) {
+            $customization_image = $filepath;
+        }
+    }
+
     $total_price = calculateTotalPrice($conn, $product_id, $quantity, $size);
 
-    $sql = "INSERT INTO orders (product_id, quantity, size, total_price, first_name, last_name, phone, email, street, barangay, city, province, postal_code) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO orders (
+        product_id, quantity, size, total_price,
+        first_name, last_name, phone, email,
+        street, barangay, city, province,
+        postal_code, customization_data, status
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')";
 
     $stmt = $conn->prepare($sql);
     
     if ($stmt) {
-        $stmt->bind_param("iisssssssssss", $product_id, $quantity, $size, $total_price, $firstName, $lastName, $phone, $email, $street, $barangay, $city, $province, $postalCode);
+        $stmt->bind_param(
+            "iisdssssssssss",
+            $product_id, $quantity, $size, $total_price,
+            $firstName, $lastName, $phone, $email,
+            $street, $barangay, $city, $province,
+            $postalCode, $customization_image
+        );
 
-        
         if ($stmt->execute()) {
             $orderPlaced = true;
         }

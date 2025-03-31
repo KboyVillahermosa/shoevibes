@@ -249,6 +249,11 @@ session_start();
       // Define color and texture options
       const colors = [
         { texture: './image/anim.jpg', size: [2, 2, 2], shininess: 60 },
+        { texture: './image/d1.jpg', size: [2, 2, 2], shininess: 60 },
+        { texture: './image/d2.jpg', size: [2, 2, 2], shininess: 60 },
+        { texture: './image/d3.jpg', size: [2, 2, 2], shininess: 60 },
+        { texture: './image/d4.jpg', size: [2, 2, 2], shininess: 60 },
+        { texture: './image/d5.jpg', size: [2, 2, 2], shininess: 60 },
         { texture: './image/fabric_.jpg', size: [4, 4, 4], shininess: 0 },
         { texture: './image/pattern_.jpg', size: [8, 8, 8], shininess: 10 },
         { texture: './image/denim_.jpg', size: [3, 3, 3], shininess: 0 },

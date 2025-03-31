@@ -16,7 +16,12 @@ if (!isset($_SESSION['user_id'])) {
   <link rel="stylesheet" href="./css/indexx.css">
   <title>Document</title>
   <style>
-
+   nav {
+    box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+    position: relative;
+    z-index: 10;
+  }
+  
     #model-container {
       width: 600PX;
       height: 60vh;
@@ -283,30 +288,7 @@ if (!isset($_SESSION['user_id'])) {
         right: 0;
       }
     }
-    .background-pattern {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: -1;
-  opacity: 0.15;
-  background-color: #ffffff;
-  background-image: linear-gradient(#000000 1px, transparent 1px),
-                   linear-gradient(to right,rgb(131, 131, 131) 1px, transparent 1px);
-  background-size: 200px 300px; /* Increased from 50px to 100px */
-  pointer-events: none;
-}
-
-.products-content {
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  box-shadow: 1px 1px 1px 1px gray;
-  background-color: white; /* Added to ensure card background stays visible */
-  border-radius: 8px; /* Optional: adds rounded corners to cards */
-}
-
+ 
     
   </style>
 </head>
@@ -316,7 +298,7 @@ if (!isset($_SESSION['user_id'])) {
   <div class="background-pattern"></div>
   
   <section>
-    <nav class="bg-white border-gray-200">
+    <nav class="bg-white border-gray-200 ">
       <div class="logos max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="" class="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="./image/logo4.png" class="h-24" alt="Flowbite Logo" />
