@@ -125,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 <div>
                     <h3 class="font-semibold text-lg mb-2">Contact Info</h3>
-                    <p class="text-gray-600">Email: info@shoevibes.com<br>Phone: +63 123 456 7890</p>
+                    <p class="text-gray-600">Email: shoevibes@gmail.com<br>Phone: +63 123 456 7890</p>
                 </div>
             </div>
         </div>
