@@ -115,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Contact Information -->
         <div class="mt-12 bg-white rounded-lg shadow-lg p-8">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Other Ways to Reach Us</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Other Ways to Reach U</h2>
             
             <div class="grid md:grid-cols-2 gap-8">
                 <div>
